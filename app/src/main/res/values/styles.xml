@@ -1,0 +1,12 @@
+<resources>
+    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+        <item name="android:colorPrimary">@color/primary</item>
+        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+    </style>
+    <style name="TitleText">
+        <item name="android:textSize">18sp</item>
+    </style>
+    <style name="UrlText">
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>
