@@ -1,44 +1,29 @@
 package uk.co.longdivision.hackernews.model;
 
-import java.util.ArrayList;
+import java.util.List;
+
 
 public class Comment {
 
-    private String text;
+    private String mText;
+    private String mUser;
+    private List<Comment> mChildComments;
 
-    private String user;
-
-    private int score;
-
-    private ArrayList<Comment> childComments;
-
-    public Comment(String text, String user, int score) {
-        this.text = text;
-        this.user = user;
-        this.score = score;
-        this.childComments = new ArrayList<>();
-    }
-
-    public Comment(String text, String user, int score, ArrayList<Comment> childComments) {
-        this.text = text;
-        this.user = user;
-        this.score = score;
-        this.childComments = childComments;
+    public Comment(String text, String user, List<Comment> childComments) {
+        this.mText = text;
+        this.mUser = user;
+        this.mChildComments = childComments;
     }
 
     public String getText(){
-        return this.text;
+        return this.mText;
     }
 
     public String getUser() {
-        return this.user;
+        return this.mUser;
     }
 
-    public int getScore() {
-        return this.score;
-    }
-
-    public ArrayList<Comment> getChildComments() {
-        return this.childComments;
+    public List<Comment> getChildComments() {
+        return this.mChildComments;
     }
 }

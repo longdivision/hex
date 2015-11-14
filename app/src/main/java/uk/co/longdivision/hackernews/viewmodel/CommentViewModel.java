@@ -2,7 +2,8 @@ package uk.co.longdivision.hackernews.viewmodel;
 
 import java.util.Date;
 
-public class Comment {
+
+public class CommentViewModel {
 
     private String text;
 
@@ -12,7 +13,7 @@ public class Comment {
 
     private Date time;
 
-    public Comment(String user, String text, int depth, Date time) {
+    public CommentViewModel(String user, String text, int depth, Date time) {
         this.user = user;
         this.text = text;
         this.depth = depth;

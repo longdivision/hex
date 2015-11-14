@@ -1,8 +1,8 @@
 package uk.co.longdivision.hackernews.adapter;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -11,29 +11,19 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import uk.co.longdivision.hackernews.R;
-import uk.co.longdivision.hackernews.viewmodel.Comment;
+import uk.co.longdivision.hackernews.viewmodel.CommentViewModel;
+
 
 public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> {
 
-    private static final String[] INDENT_COLORS = {
-            "#00BCD4", // Cyan
-            "#2196F3", // Blue
-            "#8BC34A", // Light green
-            "#E91E63", // Pink
-            "#CDDC39", // Lime
-            "#FFEB3B", // Yellow
-            "#FFC107", // Indigo
-            "#00BCD4", // Cyan
-    };
-
+    private final static int INDENT_SIZE = 5;
     private final Context mContext;
+    private List<CommentViewModel> mDataset;
 
-    private ArrayList<Comment> mDataset;
-
-    public CommentListAdapter(Context context, ArrayList<Comment> myDataset) {
+    public CommentListAdapter(Context context, List<CommentViewModel> myDataset) {
         mContext = context;
         mDataset = myDataset;
     }
@@ -48,7 +38,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
 
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
-        Comment comment = mDataset.get(position);
+        CommentViewModel comment = mDataset.get(position);
         View commentView = holder.mCommentView;
 
         renderView(commentView, comment);
@@ -59,7 +49,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
         return mDataset.size();
     }
 
-    private void renderView(View commentView, Comment comment) {
+    private void renderView(View commentView, CommentViewModel comment) {
         TextView usernameView = (TextView) commentView.findViewById(R.id.username);
         TextView relativeTimeView = (TextView) commentView.findViewById(R.id.relative_time);
         TextView textView = (TextView) commentView.findViewById(R.id.text);
@@ -67,27 +57,40 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
 
         usernameView.setText(comment.getUser());
         relativeTimeView.setText(comment.getRelativeTime());
-        textView.setText(comment.getText());
-        setIndentSize(indentView, comment.getDepth());
+        textView.setText(Html.fromHtml(comment.getText()));
+        setupIndent(indentView, comment.getDepth());
     }
 
-    private void setIndentSize(View indentView, int depth) {
+    private void setupIndent(View indentView, int depth) {
         LinearLayout indentBarView = (LinearLayout) indentView.findViewById(R.id.indent_bar);
 
         if (depth <= 0) {
-            indentView.getLayoutParams().width = 0;
-            indentBarView.setVisibility(View.INVISIBLE);
+            hideIndent(indentBarView, indentView);
         } else {
-            int indentSize = depth * 5;
-            DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
-            int indentSizeScaledForDisplay = Math.round(
-                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, indentSize, metrics));
-            int indentColor = Color.parseColor(INDENT_COLORS[depth % INDENT_COLORS.length]);
-
-            indentView.getLayoutParams().width = indentSizeScaledForDisplay;
-            indentView.setVisibility(View.VISIBLE);
-
-            indentBarView.setBackgroundColor(indentColor);
+            positionAndColorIndentForDepth(indentBarView, indentView, depth);
         }
+    }
+
+    private void hideIndent(View indentBarView, View indentView) {
+        indentView.getLayoutParams().width = 0;
+
+        indentView.setVisibility(View.INVISIBLE);
+        indentBarView.setVisibility(View.INVISIBLE);
+    }
+
+    private void positionAndColorIndentForDepth(View indentBarView, View indentView, int depth) {
+        DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+
+        int indentSize = depth * INDENT_SIZE;
+        int indentSizeScaledForDisplay = Math.round(
+                TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, indentSize, metrics));
+        indentView.getLayoutParams().width = indentSizeScaledForDisplay;
+
+        int[] indentColors = mContext.getResources().getIntArray(R.array.comment_colors);
+        int indentColor = indentColors[depth % indentColors.length];
+        indentBarView.setBackgroundColor(indentColor);
+
+        indentView.setVisibility(View.VISIBLE);
+        indentBarView.setVisibility(View.VISIBLE);
     }
 }

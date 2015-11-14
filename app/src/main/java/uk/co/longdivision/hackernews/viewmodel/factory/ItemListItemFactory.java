@@ -2,15 +2,16 @@ package uk.co.longdivision.hackernews.viewmodel.factory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import uk.co.longdivision.hackernews.model.Item;
 import uk.co.longdivision.hackernews.model.Story;
-import uk.co.longdivision.hackernews.viewmodel.ItemListItem;
+import uk.co.longdivision.hackernews.viewmodel.ItemListItemViewModel;
 
 public class ItemListItemFactory {
 
-    public static ArrayList<ItemListItem> createItemListItems(ArrayList<Item> items) {
-        ArrayList<ItemListItem> itemListItems = new ArrayList<>();
+    public static ArrayList<ItemListItemViewModel> createItemListItems(List<? extends Item> items) {
+        ArrayList<ItemListItemViewModel> itemListItems = new ArrayList<>();
         Iterator itemsIterator = items.iterator();
 
         while (itemsIterator.hasNext()) {
@@ -24,9 +25,9 @@ public class ItemListItemFactory {
         return itemListItems;
     }
 
-    public static ItemListItem createItemListItemForStory(Story story) {
-        return new ItemListItem(story.getTitle(), story.getUser(), story.getDomain(),
-                story.getScore(), story.getCommentCount());
+    public static ItemListItemViewModel createItemListItemForStory(Story story) {
+        return new ItemListItemViewModel(story.getTitle(), story.getDomain(),
+                story.getScore(), story.getCommentCount(), story.getDate());
     }
 
 }

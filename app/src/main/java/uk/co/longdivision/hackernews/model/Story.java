@@ -1,63 +1,81 @@
 package uk.co.longdivision.hackernews.model;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-public class Story implements Item{
 
-    private String id;
+public class Story implements Item {
 
-    private String title;
+    private String mId;
+    private String mTitle;
+    private String mUrl;
+    private String mUser;
+    private String mDomain;
+    private int mScore;
+    private int mCommentCount;
+    private Date mDate;
+    private List<Comment> mComments;
 
-    private String user;
-
-    private String domain;
-
-    private int score;
-
-    private int commentCount;
-
-    private ArrayList<Comment> comments;
-
-    public Story(String title, String user, String domain, int score, int commentCount) {
-        this.title = title;
-        this.user = user;
-        this.domain = domain;
-        this.score = score;
-        this.commentCount = commentCount;
-        this.comments = new ArrayList<>();
+    public Story(String id, String title, String url, String user, String domain, int score,
+                 int commentCount, Date date) {
+        this.mId = id;
+        this.mTitle = title;
+        this.mUrl = url;
+        this.mUser = user;
+        this.mDomain = domain;
+        this.mScore = score;
+        this.mCommentCount = commentCount;
+        this.mDate = date;
+        this.mComments = new ArrayList<>();
     }
 
-    public Story(String title, String user, String domain, int score, int commentCount,
-                 ArrayList<Comment> comments) {
-        this.title = title;
-        this.user = user;
-        this.domain = domain;
-        this.score = score;
-        this.commentCount = commentCount;
-        this.comments = comments;
+    public Story(String id, String title, String url, String user, String domain, int score,
+                 int commentCount, Date date, List<Comment> comments) {
+        this.mId = id;
+        this.mTitle = title;
+        this.mUrl = url;
+        this.mUser = user;
+        this.mDomain = domain;
+        this.mScore = score;
+        this.mCommentCount = commentCount;
+        this.mDate = date;
+        this.mComments = comments;
     }
 
     public String getId() {
-        return "1";
+        return this.mId;
     }
 
     public String getTitle() {
-        return this.title;
+        return this.mTitle;
+    }
+
+    public String getUrl() {
+        return this.mUrl;
     }
 
     public String getUser() {
-        return this.user;
+        return this.mUser;
     }
 
     public String getDomain() {
-        return this.domain;
+        return this.mDomain;
     }
 
     public int getScore() {
-        return this.score;
+        return this.mScore;
     }
 
     public int getCommentCount() {
-        return this.commentCount;
+        return this.mCommentCount;
+    }
+
+    public Date getDate() {
+        return this.mDate;
+    }
+
+    public List<Comment> getComments() {
+        return this.mComments;
     }
 }

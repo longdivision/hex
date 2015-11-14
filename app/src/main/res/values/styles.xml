@@ -2,6 +2,7 @@
     <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:textColor">@color/text</item>
     </style>
     <style name="TitleText">
         <item name="android:textSize">18sp</item>
