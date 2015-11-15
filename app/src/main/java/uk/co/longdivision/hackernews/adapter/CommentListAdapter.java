@@ -14,6 +14,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import uk.co.longdivision.hackernews.R;
+import uk.co.longdivision.hackernews.adapter.helper.TextHelper;
 import uk.co.longdivision.hackernews.viewmodel.CommentViewModel;
 
 
@@ -57,7 +58,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
 
         usernameView.setText(comment.getUser());
         relativeTimeView.setText(comment.getRelativeTime());
-        textView.setText(Html.fromHtml(comment.getText()));
+        textView.setText(TextHelper.removeTrailingNewlinesFromText(Html.fromHtml(comment.getText())));
         setupIndent(indentView, comment.getDepth());
     }
 
