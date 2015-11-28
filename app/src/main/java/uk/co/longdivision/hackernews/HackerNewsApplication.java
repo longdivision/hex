@@ -8,6 +8,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.BasicNetwork;
 import com.android.volley.toolbox.DiskBasedCache;
 import com.android.volley.toolbox.HurlStack;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 
 
 public class HackerNewsApplication extends Application {
@@ -16,6 +18,7 @@ public class HackerNewsApplication extends Application {
 
     public void onCreate() {
         super.onCreate();
+        setupAnalytics();
     }
 
     public RequestQueue getRequestQueue() {
@@ -28,5 +31,12 @@ public class HackerNewsApplication extends Application {
         }
 
         return mRequestQueue;
+    }
+
+    private void setupAnalytics() {
+        GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+        Tracker tracker = analytics.newTracker(R.xml.global_tracker);
+        tracker.enableAutoActivityTracking(true);
+        tracker.enableExceptionReporting(true);
     }
 }
