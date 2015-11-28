@@ -12,6 +12,12 @@ public class ItemListItemFactory {
 
     public static ArrayList<ItemListItemViewModel> createItemListItems(List<? extends Item> items) {
         ArrayList<ItemListItemViewModel> itemListItems = new ArrayList<>();
+
+        if (items == null) {
+            return itemListItems;
+        }
+
+
         Iterator itemsIterator = items.iterator();
 
         while (itemsIterator.hasNext()) {
