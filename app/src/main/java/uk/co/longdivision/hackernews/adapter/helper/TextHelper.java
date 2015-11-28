@@ -3,7 +3,7 @@ package uk.co.longdivision.hackernews.adapter.helper;
 public class TextHelper {
 
     public static CharSequence removeTrailingNewlinesFromText(CharSequence text) {
-        if (text == null || text == "") {
+        if (text == null || text.length() < 1) {
             return "";
         }
 
