@@ -36,7 +36,7 @@ public class FrontPageActivity extends Activity implements FrontPageItemsHandler
         setContentView(R.layout.activity_front_page);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.front_page_layout);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -101,7 +101,7 @@ public class FrontPageActivity extends Activity implements FrontPageItemsHandler
 
     private void setRefreshing(boolean refreshing) {
         SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(
-                R.id.swipe_refresh_layout);
+                R.id.front_page_layout);
         mSwipeRefreshLayout.setRefreshing(refreshing);
     }
 

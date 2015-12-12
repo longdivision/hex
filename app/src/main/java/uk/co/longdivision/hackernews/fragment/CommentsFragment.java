@@ -2,6 +2,7 @@ package uk.co.longdivision.hackernews.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -24,11 +25,13 @@ import uk.co.longdivision.hackernews.model.Story;
 import uk.co.longdivision.hackernews.viewmodel.CommentViewModel;
 
 
-public class CommentsFragment extends Fragment implements ItemHandler {
+public class CommentsFragment extends Fragment implements ItemHandler,
+        SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
 
     @Override
@@ -39,6 +42,8 @@ public class CommentsFragment extends Fragment implements ItemHandler {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_comments, container,
                 false);
 
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(
+                R.id.comment_layout);
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.comment_recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -47,6 +52,8 @@ public class CommentsFragment extends Fragment implements ItemHandler {
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        setupRefreshLayout();
 
         return rootView;
     }
@@ -66,6 +73,8 @@ public class CommentsFragment extends Fragment implements ItemHandler {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
+
+        setRefreshing(false);
     }
 
     public void addCommentToList(Comment comment, List<CommentViewModel> list, int depth) {
@@ -81,5 +90,25 @@ public class CommentsFragment extends Fragment implements ItemHandler {
         HackerNewsApplication appContext = (HackerNewsApplication) this.getContext()
                 .getApplicationContext();
         new GetItem(this, appContext).execute(storyId);
+    }
+
+    @Override
+    public void onRefresh() {
+        setRefreshing(true);
+        loadItem();
+    }
+
+    private void setupRefreshLayout() {
+        mSwipeRefreshLayout.setOnRefreshListener(this);
+        mSwipeRefreshLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                mSwipeRefreshLayout.setRefreshing(true);
+            }
+        });
+    }
+
+    private void setRefreshing(boolean refreshing) {
+        mSwipeRefreshLayout.setRefreshing(refreshing);
     }
 }
