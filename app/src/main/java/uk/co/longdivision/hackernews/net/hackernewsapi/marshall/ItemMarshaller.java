@@ -19,6 +19,7 @@ public class ItemMarshaller {
             String id = rawItem.getString("id");
             String title = rawItem.getString("title");
             String url = rawItem.getString("url");
+            String commentsUrl = rawItem.getString("commentsUrl");
             String author = rawItem.getString("author");
             String domain = rawItem.getString("domain");
             int score = rawItem.getInt("score");
@@ -31,7 +32,7 @@ public class ItemMarshaller {
                 comments = marshallComments(rawComments);
             }
 
-            return new Story(id, title, url, author, domain, score, commentCount, date, comments);
+            return new Story(id, title, url, commentsUrl, author, domain, score, commentCount, date, comments);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

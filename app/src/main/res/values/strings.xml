@@ -2,4 +2,6 @@
     <string name="app_name">Hacker News</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-</resources>
+    <string name="shareComments">Share Comments</string>
+    <string name="shareArticle">Share Article</string>
+    </resources>

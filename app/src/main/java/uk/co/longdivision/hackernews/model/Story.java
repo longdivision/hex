@@ -10,6 +10,7 @@ public class Story implements Item {
     private String mId;
     private String mTitle;
     private String mUrl;
+    private String mCommentsUrl;
     private String mUser;
     private String mDomain;
     private int mScore;
@@ -17,11 +18,12 @@ public class Story implements Item {
     private Date mDate;
     private List<Comment> mComments;
 
-    public Story(String id, String title, String url, String user, String domain, int score,
-                 int commentCount, Date date) {
+    public Story(String id, String title, String url, String commentsUrl, String user, String domain,
+                 int score, int commentCount, Date date) {
         this.mId = id;
         this.mTitle = title;
         this.mUrl = url;
+        this.mCommentsUrl = commentsUrl;
         this.mUser = user;
         this.mDomain = domain;
         this.mScore = score;
@@ -30,11 +32,12 @@ public class Story implements Item {
         this.mComments = new ArrayList<>();
     }
 
-    public Story(String id, String title, String url, String user, String domain, int score,
-                 int commentCount, Date date, List<Comment> comments) {
+    public Story(String id, String title, String url, String commentsUrl, String user, String domain,
+                 int score, int commentCount, Date date, List<Comment> comments) {
         this.mId = id;
         this.mTitle = title;
         this.mUrl = url;
+        this.mCommentsUrl = commentsUrl;
         this.mUser = user;
         this.mDomain = domain;
         this.mScore = score;
@@ -53,6 +56,10 @@ public class Story implements Item {
 
     public String getUrl() {
         return this.mUrl;
+    }
+
+    public String getCommentsUrl() {
+        return this.mCommentsUrl;
     }
 
     public String getUser() {

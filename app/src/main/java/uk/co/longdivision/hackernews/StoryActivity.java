@@ -1,5 +1,6 @@
 package uk.co.longdivision.hackernews;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.PagerAdapter;
@@ -9,31 +10,36 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import uk.co.longdivision.hackernews.adapter.StorySlidePagerAdapter;
+import uk.co.longdivision.hackernews.asynctask.GetItem;
+import uk.co.longdivision.hackernews.asynctask.ItemHandler;
+import uk.co.longdivision.hackernews.model.Item;
+import uk.co.longdivision.hackernews.model.Story;
 
-public class StoryActivity extends FragmentActivity implements ViewPager.OnPageChangeListener {
+public class StoryActivity extends FragmentActivity implements ViewPager.OnPageChangeListener, ItemHandler {
 
     private ViewPager mPager;
-
-    private PagerAdapter mPagerAdaper;
-
+    private PagerAdapter mPagerAdapter;
+    private Item mItem;
     private enum Page { WEBVIEW, COMMENTS }
-
-    private Page page;
+    private Page mPage;
+    private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        loadItem();
 
         getActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_story);
         setTitle("");
 
         mPager = (ViewPager) findViewById(R.id.pager);
-        mPagerAdaper = new StorySlidePagerAdapter(getSupportFragmentManager());
-        mPager.setAdapter(mPagerAdaper);
+        mPagerAdapter = new StorySlidePagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(mPagerAdapter);
         mPager.addOnPageChangeListener(this);
 
-        page = Page.WEBVIEW;
+        mPage = Page.WEBVIEW;
     }
 
     @Override
@@ -41,6 +47,8 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
     {
         if (item.getItemId() == android.R.id.home) {
             this.finish();
+        } else if (item.getItemId() == R.id.action_share) {
+            handleShareRequest();
         } else if (item.getItemId() == R.id.action_comments) {
             mPager.setCurrentItem(1);
         } else if (item.getItemId() == R.id.action_webview) {
@@ -54,7 +62,7 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
 
-        if (page == Page.WEBVIEW) {
+        if (mPage == Page.WEBVIEW) {
             inflater.inflate(R.menu.activity_story_icons_webview_state, menu);
         } else {
             inflater.inflate(R.menu.activity_story_icons_comment_state, menu);
@@ -65,17 +73,43 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
     }
 
     @Override
     public void onPageSelected(int position) {
-        page = (position == 0) ? Page.WEBVIEW : Page.COMMENTS;
+        mPage = (position == 0) ? Page.WEBVIEW : Page.COMMENTS;
 
         this.invalidateOptionsMenu();
     }
 
     @Override
     public void onPageScrollStateChanged(int state) {
+    }
+
+    @Override
+    public void onItemReady(Item item) {
+        this.mItem = item;
+    }
+
+    private void handleShareRequest() {
+        String intentMessage = getString(R.string.shareArticle);
+        String url = ((Story) mItem).getUrl();
+
+        if (mPage.equals(Page.COMMENTS)) {
+            intentMessage = getString(R.string.shareComments);
+            url = ((Story) mItem).getCommentsUrl();
+        }
+
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, url);
+        startActivity(Intent.createChooser(shareIntent, intentMessage));
+    }
+
+    private void loadItem() {
+        String storyId = this.getIntent().getStringExtra(STORY_ID_INTENT_EXTRA_NAME);
+        HackerNewsApplication appContext = (HackerNewsApplication) this.getApplicationContext()
+                .getApplicationContext();
+        new GetItem(this, appContext).execute(storyId);
     }
 }
