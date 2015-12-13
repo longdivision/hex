@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uk.co.longdivision.hackernews">
+    package="uk.co.longdivision.hex">
     <application android:allowBackup="true" android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher" android:theme="@style/AppTheme"
-        android:name="uk.co.longdivision.hackernews.HackerNewsApplication">
+        android:name=".HexApplication">
         <activity
-            android:name=".FrontPageActivity"
+            android:name="uk.co.longdivision.hex.FrontPageActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -12,7 +12,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="uk.co.longdivision.hackernews.StoryActivity"
+            android:name="uk.co.longdivision.hex.StoryActivity"
             android:label="Story" >
         </activity>
     </application>
