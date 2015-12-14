@@ -22,6 +22,7 @@ public class WebViewFragment extends Fragment implements ItemHandler,
 
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private boolean mRefreshing;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,8 +46,13 @@ public class WebViewFragment extends Fragment implements ItemHandler,
     public void onItemReady(Item item) {
         Story story = (Story) item;
         WebView webView = (WebView) getView().findViewById(R.id.webView);
+        webView.setWebViewClient(new WebViewClient() {
+            public void onPageFinished(WebView view, String url) {
+                setRefreshing(false);
+            }
+        });
+
         webView.loadUrl(story.getUrl());
-        setRefreshing(false);
     }
 
     private void loadItem() {
@@ -63,13 +69,14 @@ public class WebViewFragment extends Fragment implements ItemHandler,
     }
 
     private void setupRefreshLayout() {
+        mRefreshing = true;
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.post(new Runnable() {
+        mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
+                mSwipeRefreshLayout.setRefreshing(mRefreshing);
             }
-        });
+        }, 500);
     }
 
     private void setRefreshing(boolean refreshing) {

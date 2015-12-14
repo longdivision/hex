@@ -29,6 +29,7 @@ public class FrontPageActivity extends Activity implements FrontPageItemsHandler
     private List<? extends Item> mItems;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
+    private boolean mRefreshing;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,18 +91,18 @@ public class FrontPageActivity extends Activity implements FrontPageItemsHandler
     }
 
     private void setupRefreshLayout() {
+        mRefreshing = true;
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.post(new Runnable() {
+        mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
+                mSwipeRefreshLayout.setRefreshing(mRefreshing);
             }
-        });
+        }, 500);
     }
 
     private void setRefreshing(boolean refreshing) {
-        SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(
-                R.id.front_page_layout);
+        mRefreshing = refreshing;
         mSwipeRefreshLayout.setRefreshing(refreshing);
     }
 

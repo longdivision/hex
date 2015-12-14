@@ -33,6 +33,7 @@ public class CommentsFragment extends Fragment implements ItemHandler,
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
+    private boolean mRefreshing;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,13 +100,14 @@ public class CommentsFragment extends Fragment implements ItemHandler,
     }
 
     private void setupRefreshLayout() {
+        mRefreshing = true;
         mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.post(new Runnable() {
+        mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(true);
+                mSwipeRefreshLayout.setRefreshing(mRefreshing);
             }
-        });
+        }, 500);
     }
 
     private void setRefreshing(boolean refreshing) {
