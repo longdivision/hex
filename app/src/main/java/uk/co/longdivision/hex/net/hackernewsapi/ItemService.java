@@ -19,7 +19,7 @@ public class ItemService {
     }
 
     public Item getItem(String itemId) {
-        String API_URL = "https://hacker-news-api.herokuapp.com";
+        String API_URL = "https://hex-api.herokuapp.com";
         String STORY_PATH = "/story";
         String itemPath = API_URL + STORY_PATH + "/" + itemId;
 
