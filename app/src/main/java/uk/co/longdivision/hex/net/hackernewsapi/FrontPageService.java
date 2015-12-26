@@ -21,7 +21,7 @@ public class FrontPageService {
     }
 
     public List<? extends Item> getTopItems() {
-        String API_URL = "https://hacker-news-api.herokuapp.com";
+        String API_URL = "https://hex-api.herokuapp.com";
         String FRONT_PAGE_PATH = "/front-page";
         String frontPagePath = API_URL + FRONT_PAGE_PATH;
 
