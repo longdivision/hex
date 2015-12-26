@@ -11,6 +11,7 @@
     <color name="lime">#CDDC39</color>
     <color name="yellow">#FFEB3B</color>
     <color name="indigo">#FFC107</color>
+    <color name="list_divider_color">#EEEEEE</color>
     <integer-array name="comment_colors">
         <item>@color/cyan</item>
         <item>@color/blue</item>

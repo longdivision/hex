@@ -85,8 +85,7 @@ public class FrontPageActivity extends Activity implements FrontPageItemsHandler
     }
 
     private void setupRecyclerView() {
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this,
-                DividerItemDecoration.VERTICAL_LIST));
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
         mRecyclerView.setHasFixedSize(true);
     }
 
