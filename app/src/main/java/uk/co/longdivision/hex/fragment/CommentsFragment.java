@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import uk.co.longdivision.hex.HexApplication;
@@ -48,7 +47,6 @@ public class CommentsFragment extends Fragment implements ItemHandler,
         mRecyclerView = (RecyclerView) rootView.findViewById(R.id.comment_recycler_view);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(getActivity()));
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -78,7 +76,8 @@ public class CommentsFragment extends Fragment implements ItemHandler,
     }
 
     public void addCommentToList(Comment comment, List<CommentViewModel> list, int depth) {
-        list.add(new CommentViewModel(comment.getUser(), comment.getText(), depth, new Date()));
+        list.add(new CommentViewModel(comment.getUser(), comment.getText(), depth,
+                comment.getCommentCount(), comment.getDate()));
 
         for(uk.co.longdivision.hex.model.Comment childComment : comment.getChildComments()) {
             addCommentToList(childComment, list, depth + 1);

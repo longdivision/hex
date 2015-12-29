@@ -14,52 +14,71 @@ import android.widget.TextView;
 import java.util.List;
 
 import uk.co.longdivision.hex.R;
+import uk.co.longdivision.hex.adapter.helper.CommentListManager;
 import uk.co.longdivision.hex.adapter.helper.TextHelper;
+import uk.co.longdivision.hex.listener.ClickListener;
 import uk.co.longdivision.hex.viewmodel.CommentViewModel;
 
 
-public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> {
+public class CommentListAdapter extends RecyclerView.Adapter<ViewHolder> implements ClickListener {
 
     private final static int INDENT_SIZE = 5;
     private final Context mContext;
-    private List<CommentViewModel> mDataset;
+    private CommentListManager mCommentListManager;
 
-    public CommentListAdapter(Context context, List<CommentViewModel> myDataset) {
+    public CommentListAdapter(Context context, List<CommentViewModel> comments) {
         mContext = context;
-        mDataset = myDataset;
+        mCommentListManager = new CommentListManager(comments);
     }
 
     @Override
-    public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LinearLayout view = (LinearLayout) LayoutInflater.from(parent.getContext()).inflate(
                 R.layout.comment, parent, false);
 
-        return new CommentViewHolder(view);
+        ViewHolder viewHolder = new ViewHolder(view);
+        viewHolder.setClickListener(this);
+
+        return viewHolder;
     }
 
     @Override
-    public void onBindViewHolder(CommentViewHolder holder, int position) {
-        CommentViewModel comment = mDataset.get(position);
-        View commentView = holder.mCommentView;
-
-        renderView(commentView, comment);
+    public void onBindViewHolder(ViewHolder holder, int position) {
+        CommentViewModel comment = mCommentListManager.getVisibleComments().get(position);
+        renderCommentIntoView(comment, holder.mView);
     }
 
     @Override
     public int getItemCount() {
-        return mDataset.size();
+        return mCommentListManager.getVisibleComments().size();
     }
 
-    private void renderView(View commentView, CommentViewModel comment) {
+    @Override
+    public void onClick(View view, int position, boolean isLongClick) {
+        mCommentListManager.toggleCommentAtPosition(position);
+        notifyDataSetChanged();
+    }
+
+    private void renderCommentIntoView(CommentViewModel comment, View commentView) {
         TextView usernameView = (TextView) commentView.findViewById(R.id.username);
-        TextView relativeTimeView = (TextView) commentView.findViewById(R.id.relative_time);
+        TextView relativeTimeView = (TextView) commentView.findViewById(R.id.relativeTime);
         TextView textView = (TextView) commentView.findViewById(R.id.text);
         LinearLayout indentView = (LinearLayout) commentView.findViewById(R.id.indent);
+        View childCommentsHidden = commentView.findViewById(R.id.childCommentsHidden);
 
         usernameView.setText(comment.getUser());
         relativeTimeView.setText(comment.getRelativeTime());
         textView.setText(TextHelper.removeTrailingNewlinesFromText(Html.fromHtml(comment.getText())));
+
         setupIndent(indentView, comment.getDepth());
+
+        if (comment.isCollapsed() && comment.getCommentCount() > 0) {
+            TextView commentCount = (TextView) commentView.findViewById(R.id.childCommentCount);
+            commentCount.setText(String.valueOf(comment.getCommentCount()));
+            childCommentsHidden.setVisibility(View.VISIBLE);
+        } else {
+            childCommentsHidden.setVisibility(View.GONE);
+        }
     }
 
     private void setupIndent(View indentView, int depth) {
@@ -94,4 +113,5 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentViewHolder> 
         indentView.setVisibility(View.VISIBLE);
         indentBarView.setVisibility(View.VISIBLE);
     }
+
 }

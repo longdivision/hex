@@ -19,35 +19,62 @@
         android:id="@+id/comment_container"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
         android:orientation="vertical">
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-            <TextView
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/username"
-                android:text="User"
-                android:textSize="16sp"
-                android:lineSpacingMultiplier="1.1"
-                android:textColor="#000000"/>
-            <TextView
-                android:layout_width="4sp"
-                android:layout_height="wrap_content"/>
-            <TextView
+                android:layout_alignParentStart="true">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/username"
+                    android:text="User"
+                    android:textSize="14sp"
+                    android:lineSpacingMultiplier="1.1" />
+                <TextView
+                    android:layout_width="4sp"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/relativeTime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:textSize="14sp"
+                    android:text="When"/>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/childCommentsHidden"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="•"/>
-            <TextView
-                android:layout_width="4sp"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/relative_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="When"/>
-        </LinearLayout>
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/tag"
+                android:backgroundTint="@color/hidden_comments_tag"
+                android:paddingLeft="4dp"
+                android:paddingRight="4dp">
+                <TextView
+                    android:id="@+id/childCommentCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    android:text="101"/>
+                <LinearLayout
+                    android:layout_marginTop="3dp"
+                    android:layout_marginLeft="2dp"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:state_pressed="false"
+                    android:backgroundTint="@android:color/white"
+                    android:background="@drawable/comment"/>
+            </LinearLayout>
+        </RelativeLayout>
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="8dp" />
@@ -55,8 +82,15 @@
             android:id="@+id/text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Text"
-            android:textSize="16sp"
-            android:textColor="#000000"/>
+            android:text="Comment text"
+            android:textSize="15sp"
+            android:textColor="@android:color/black"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp"/>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/list_divider_color"/>
     </LinearLayout>
 </LinearLayout>

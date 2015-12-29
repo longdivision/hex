@@ -54,7 +54,9 @@ public class ItemMarshaller {
 
                 String text = rawComment.getString("text");
                 String author = rawComment.getString("author");
-                comments.add(new Comment(text, author, childComments));
+                int commentCount = rawComment.getInt("commentCount");
+                Date date = new DateTime(rawComment.getString("time")).toDate();
+                comments.add(new Comment(text, author, childComments, commentCount, date));
             } catch (Exception e) {
                 e.printStackTrace();
             }

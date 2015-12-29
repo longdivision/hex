@@ -1,6 +1,7 @@
 package uk.co.longdivision.hex.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.view.View;
 import android.widget.LinearLayout;
 
@@ -8,12 +9,12 @@ import uk.co.longdivision.hex.listener.ClickListener;
 
 public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
         View.OnLongClickListener {
-    public LinearLayout mTextView;
+    public View mView;
     public ClickListener clickListener;
 
-    public ViewHolder(LinearLayout v) {
+    public ViewHolder(View v) {
         super(v);
-        mTextView = v;
+        mView = v;
         v.setOnClickListener(this);
         v.setOnLongClickListener(this);
     }
