@@ -10,6 +10,7 @@ import java.util.List;
 
 import uk.co.longdivision.hex.model.Item;
 import uk.co.longdivision.hex.net.hackernewsapi.marshall.FrontPageMarshaller;
+import uk.co.longdivision.hex.net.hackernewsapi.util.RetryPolicyFactory;
 
 
 public class FrontPageService {
@@ -27,6 +28,8 @@ public class FrontPageService {
 
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
         JsonArrayRequest request = new JsonArrayRequest(frontPagePath, future, future);
+        request.setRetryPolicy(RetryPolicyFactory.build());
+
         mRequestQueue.add(request);
 
         try {

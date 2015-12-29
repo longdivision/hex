@@ -8,6 +8,7 @@ import org.json.JSONObject;
 
 import uk.co.longdivision.hex.model.Item;
 import uk.co.longdivision.hex.net.hackernewsapi.marshall.ItemMarshaller;
+import uk.co.longdivision.hex.net.hackernewsapi.util.RetryPolicyFactory;
 
 
 public class ItemService {
@@ -25,6 +26,7 @@ public class ItemService {
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(itemPath, future, future);
+        request.setRetryPolicy(RetryPolicyFactory.build());
         mRequestQueue.add(request);
 
         try {
