@@ -87,7 +87,8 @@
             android:textColor="@android:color/black"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingBottom="16dp"/>
+            android:paddingBottom="16dp"
+            android:autoLink="web"/>
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="1dp"

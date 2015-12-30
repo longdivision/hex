@@ -3,7 +3,9 @@ package uk.co.longdivision.hex.adapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -62,15 +64,15 @@ public class CommentListAdapter extends RecyclerView.Adapter<ViewHolder> impleme
     private void renderCommentIntoView(CommentViewModel comment, View commentView) {
         TextView usernameView = (TextView) commentView.findViewById(R.id.username);
         TextView relativeTimeView = (TextView) commentView.findViewById(R.id.relativeTime);
-        TextView textView = (TextView) commentView.findViewById(R.id.text);
+        final TextView textView = (TextView) commentView.findViewById(R.id.text);
         LinearLayout indentView = (LinearLayout) commentView.findViewById(R.id.indent);
         View childCommentsHidden = commentView.findViewById(R.id.childCommentsHidden);
 
         usernameView.setText(comment.getUser());
         relativeTimeView.setText(comment.getRelativeTime());
         textView.setText(TextHelper.removeTrailingNewlinesFromText(Html.fromHtml(comment.getText())));
-
         setupIndent(indentView, comment.getDepth());
+        setupClickListenerForTextView(textView);
 
         if (comment.isCollapsed() && comment.getCommentCount() > 0) {
             TextView commentCount = (TextView) commentView.findViewById(R.id.childCommentCount);
@@ -79,6 +81,25 @@ public class CommentListAdapter extends RecyclerView.Adapter<ViewHolder> impleme
         } else {
             childCommentsHidden.setVisibility(View.GONE);
         }
+    }
+
+    /**
+     * The comment body TextView is setup for autolinking. A special handler is used to ensure
+     * non-link clicks are captured and bubbled to the parent to simulate a click.
+     *
+     * @param textView
+     */
+    private void setupClickListenerForTextView(final TextView textView) {
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Non-autolinked text will have a value of -1 for selectionStart and selectionEnd
+                if (textView.getSelectionStart() == -1 && textView.getSelectionEnd() == -1) {
+                    View commentWrapper = (View) textView.getParent().getParent();
+                    commentWrapper.performLongClick();
+                }
+            }
+        });
     }
 
     private void setupIndent(View indentView, int depth) {
