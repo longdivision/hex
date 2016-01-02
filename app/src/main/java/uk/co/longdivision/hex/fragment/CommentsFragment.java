@@ -33,6 +33,7 @@ public class CommentsFragment extends Fragment implements ItemHandler,
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
     private boolean mRefreshing;
+    private GetItem mItemFetcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,7 +89,8 @@ public class CommentsFragment extends Fragment implements ItemHandler,
         String storyId = this.getActivity().getIntent().getStringExtra(STORY_ID_INTENT_EXTRA_NAME);
         HexApplication appContext = (HexApplication) this.getContext()
                 .getApplicationContext();
-        new GetItem(this, appContext).execute(storyId);
+        mItemFetcher = new GetItem(this, appContext);
+        mItemFetcher.execute(storyId);
     }
 
     @Override
@@ -109,6 +111,15 @@ public class CommentsFragment extends Fragment implements ItemHandler,
     }
 
     private void setRefreshing(boolean refreshing) {
-        mSwipeRefreshLayout.setRefreshing(refreshing);
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(refreshing);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroy();
+        mItemFetcher.removeHandler();
+        mSwipeRefreshLayout.setOnRefreshListener(null);
     }
 }

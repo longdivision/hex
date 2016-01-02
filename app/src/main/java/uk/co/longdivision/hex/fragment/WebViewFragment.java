@@ -23,6 +23,7 @@ public class WebViewFragment extends Fragment implements ItemHandler,
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean mRefreshing;
+    private GetItem mItemFetcher;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,7 +60,8 @@ public class WebViewFragment extends Fragment implements ItemHandler,
         String storyId = this.getActivity().getIntent().getStringExtra(STORY_ID_INTENT_EXTRA_NAME);
         HexApplication appContext = (HexApplication) this.getContext()
                 .getApplicationContext();
-        new GetItem(this, appContext).execute(storyId);
+        mItemFetcher = new GetItem(this, appContext);
+        mItemFetcher.execute(storyId);
     }
 
     @Override
@@ -80,8 +82,15 @@ public class WebViewFragment extends Fragment implements ItemHandler,
     }
 
     private void setRefreshing(boolean refreshing) {
-        SwipeRefreshLayout mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(
-                R.id.webview_layout);
-        mSwipeRefreshLayout.setRefreshing(refreshing);
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(refreshing);
+        }
+    }
+
+    @Override
+    public void onDestroyView() {
+        mItemFetcher.removeHandler();
+        mSwipeRefreshLayout.setOnRefreshListener(null);
+        super.onDestroy();
     }
 }
