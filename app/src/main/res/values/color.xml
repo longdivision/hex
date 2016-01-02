@@ -12,6 +12,7 @@
     <color name="yellow">#FFEB3B</color>
     <color name="indigo">#FFC107</color>
     <color name="list_divider_color">#EEEEEE</color>
+    <color name="hidden_comments_tag">#FF9E80</color>
     <integer-array name="comment_colors">
         <item>@color/cyan</item>
         <item>@color/blue</item>
