@@ -13,7 +13,7 @@
         </activity>
         <activity
             android:name="uk.co.longdivision.hex.StoryActivity"
-            android:label="Story" >
+            android:label="" >
         </activity>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
