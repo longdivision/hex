@@ -49,20 +49,6 @@ public class FrontPageActivity extends Activity implements FrontPageItemsHandler
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_home, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        return id == R.id.action_settings || super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onFrontPageItemsReady(List<? extends Item> items) {
         setRefreshing(false);
         mItems = items;
