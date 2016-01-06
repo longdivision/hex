@@ -1,5 +1,7 @@
 package uk.co.longdivision.hex;
 
+import android.app.ActionBar;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -23,6 +25,7 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
     private enum Page { WEBVIEW, COMMENTS }
     private Page mPage;
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
+    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +33,28 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
 
         loadItem();
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+        mActionBar = getActionBar();
+        mActionBar.setDisplayHomeAsUpEnabled(true);
+        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+            @Override
+            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
+                if (mPager != null) {
+                    mPager.setCurrentItem(tab.getPosition());
+                }
+            }
+
+            @Override
+            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
+            }
+
+            @Override
+            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
+            }
+        };
+        mActionBar.addTab(mActionBar.newTab().setText("Article").setTabListener(tabListener));
+        mActionBar.addTab(mActionBar.newTab().setText("Comments").setTabListener(tabListener));
+
         setContentView(R.layout.activity_story);
         setTitle("");
 
@@ -45,14 +69,8 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if (item.getItemId() == android.R.id.home) {
-            this.finish();
-        } else if (item.getItemId() == R.id.action_share) {
+        if (item.getItemId() == R.id.action_share) {
             handleShareRequest();
-        } else if (item.getItemId() == R.id.action_comments) {
-            mPager.setCurrentItem(1);
-        } else if (item.getItemId() == R.id.action_webview) {
-            mPager.setCurrentItem(0);
         }
 
         return true;
@@ -60,14 +78,7 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-
-        if (mPage == Page.WEBVIEW) {
-            inflater.inflate(R.menu.activity_story_icons_webview_state, menu);
-        } else {
-            inflater.inflate(R.menu.activity_story_icons_comment_state, menu);
-        }
-
+        getMenuInflater().inflate(R.menu.activity_story_icons, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -77,9 +88,7 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
 
     @Override
     public void onPageSelected(int position) {
-        mPage = (position == 0) ? Page.WEBVIEW : Page.COMMENTS;
-
-        this.invalidateOptionsMenu();
+        mActionBar.selectTab(mActionBar.getTabAt(position));
     }
 
     @Override
