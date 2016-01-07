@@ -69,7 +69,9 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
     {
-        if (item.getItemId() == R.id.action_share) {
+        if (item.getItemId() == android.R.id.home) {
+            this.finish();
+        } else if (item.getItemId() == R.id.action_share) {
             handleShareRequest();
         }
 
