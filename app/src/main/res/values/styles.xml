@@ -1,8 +1,9 @@
 <resources>
-    <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimary">@color/primary</item>
         <item name="android:colorPrimaryDark">@color/primary_dark</item>
         <item name="android:textColor">@color/text</item>
+        <item name="android:windowActionModeOverlay">false</item>
     </style>
     <style name="TitleText">
         <item name="android:textSize">18sp</item>

@@ -1,13 +1,12 @@
 package uk.co.longdivision.hex;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import java.util.List;
@@ -18,16 +17,18 @@ import uk.co.longdivision.hex.asynctask.FrontPageItemsHandler;
 import uk.co.longdivision.hex.decoration.DividerItemDecoration;
 import uk.co.longdivision.hex.listener.ClickListener;
 import uk.co.longdivision.hex.model.Item;
+import uk.co.longdivision.hex.model.Story;
 import uk.co.longdivision.hex.viewmodel.ItemListItemViewModel;
 import uk.co.longdivision.hex.viewmodel.factory.ItemListItemFactory;
 
 
-public class FrontPageActivity extends Activity implements FrontPageItemsHandler, ClickListener,
-        SwipeRefreshLayout.OnRefreshListener {
+public class FrontPageActivity extends AppCompatActivity implements FrontPageItemsHandler,
+        ClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView mRecyclerView;
     private List<? extends Item> mItems;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private final static String STORY_TITLE_INTENT_EXTRA_NAME = "storyTitle";
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
     private boolean mRefreshing;
 
@@ -43,6 +44,7 @@ public class FrontPageActivity extends Activity implements FrontPageItemsHandler
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
         mRecyclerView.setLayoutManager(layoutManager);
+        setupToolbar();
         setupRefreshLayout();
         setupRecyclerView();
         fetchFrontPageItems();
@@ -60,6 +62,8 @@ public class FrontPageActivity extends Activity implements FrontPageItemsHandler
     @Override
     public void onClick(View v, int position, boolean isLongClick) {
         Intent storyIntent = new Intent(this, StoryActivity.class);
+        storyIntent.putExtra(STORY_TITLE_INTENT_EXTRA_NAME, ((Story) mItems.get(position))
+                .getTitle());
         storyIntent.putExtra(STORY_ID_INTENT_EXTRA_NAME, mItems.get(position).getId());
         startActivity(storyIntent);
     }
@@ -68,6 +72,12 @@ public class FrontPageActivity extends Activity implements FrontPageItemsHandler
     public void onRefresh() {
         setRefreshing(true);
         fetchFrontPageItems();
+    }
+
+    private void setupToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(R.string.front_page);
     }
 
     private void setupRecyclerView() {

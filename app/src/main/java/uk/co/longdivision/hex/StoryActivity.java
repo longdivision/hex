@@ -1,14 +1,13 @@
 package uk.co.longdivision.hex;
 
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import uk.co.longdivision.hex.adapter.StorySlidePagerAdapter;
@@ -17,15 +16,18 @@ import uk.co.longdivision.hex.asynctask.ItemHandler;
 import uk.co.longdivision.hex.model.Item;
 import uk.co.longdivision.hex.model.Story;
 
-public class StoryActivity extends FragmentActivity implements ViewPager.OnPageChangeListener, ItemHandler {
+public class StoryActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
+        ItemHandler, TabLayout.OnTabSelectedListener {
 
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private Item mItem;
+    private TabLayout mTabLayout;
+
     private enum Page { WEBVIEW, COMMENTS }
     private Page mPage;
+    private final static String STORY_TITLE_INTENT_EXTRA_NAME = "storyTitle";
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
-    private ActionBar mActionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,30 +35,12 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
 
         loadItem();
 
-        mActionBar = getActionBar();
-        mActionBar.setDisplayHomeAsUpEnabled(true);
-        mActionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-            @Override
-            public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-                if (mPager != null) {
-                    mPager.setCurrentItem(tab.getPosition());
-                }
-            }
-
-            @Override
-            public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction ft) {
-            }
-
-            @Override
-            public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-            }
-        };
-        mActionBar.addTab(mActionBar.newTab().setText("Article").setTabListener(tabListener));
-        mActionBar.addTab(mActionBar.newTab().setText("Comments").setTabListener(tabListener));
-
         setContentView(R.layout.activity_story);
-        setTitle("");
+
+        setupToolbar();
+
+        mTabLayout = (TabLayout) findViewById(R.id.tabs);
+        setupTabs();
 
         mPager = (ViewPager) findViewById(R.id.pager);
         mPagerAdapter = new StorySlidePagerAdapter(getSupportFragmentManager());
@@ -90,7 +74,7 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
 
     @Override
     public void onPageSelected(int position) {
-        mActionBar.selectTab(mActionBar.getTabAt(position));
+        mTabLayout.getTabAt(position).select();
     }
 
     @Override
@@ -100,6 +84,32 @@ public class StoryActivity extends FragmentActivity implements ViewPager.OnPageC
     @Override
     public void onItemReady(Item item) {
         this.mItem = item;
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        mPager.setCurrentItem(tab.getPosition());
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {}
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {}
+
+    private void setupToolbar() {
+        String storyTitle = this.getIntent().getStringExtra(STORY_TITLE_INTENT_EXTRA_NAME);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(storyTitle);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void setupTabs() {
+        mTabLayout.addTab(mTabLayout.newTab().setText("Article"));
+        mTabLayout.addTab(mTabLayout.newTab().setText("Comments"));
+        mTabLayout.setOnTabSelectedListener(this);
     }
 
     private void handleShareRequest() {
