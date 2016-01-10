@@ -74,6 +74,7 @@ public class CommentsFragment extends Fragment implements ItemHandler,
         mRecyclerView.setAdapter(mAdapter);
 
         setRefreshing(false);
+        updateRefreshSpinner();
     }
 
     public void addCommentToList(Comment comment, List<CommentViewModel> list, int depth) {
@@ -96,23 +97,28 @@ public class CommentsFragment extends Fragment implements ItemHandler,
     @Override
     public void onRefresh() {
         setRefreshing(true);
+        updateRefreshSpinner();
         loadItem();
     }
 
     private void setupRefreshLayout() {
-        mRefreshing = true;
+        setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(mRefreshing);
+                updateRefreshSpinner();
             }
         }, 500);
     }
 
     private void setRefreshing(boolean refreshing) {
+        mRefreshing = refreshing;
+    }
+
+    private void updateRefreshSpinner() {
         if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setRefreshing(refreshing);
+            mSwipeRefreshLayout.setRefreshing(mRefreshing);
         }
     }
 

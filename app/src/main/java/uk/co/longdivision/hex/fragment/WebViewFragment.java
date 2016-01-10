@@ -51,6 +51,7 @@ public class WebViewFragment extends Fragment implements ItemHandler,
         webView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
                 setRefreshing(false);
+                updateRefreshSpinner();
             }
         });
 
@@ -68,6 +69,7 @@ public class WebViewFragment extends Fragment implements ItemHandler,
     @Override
     public void onRefresh() {
         setRefreshing(true);
+        updateRefreshSpinner();
         loadItem();
     }
 
@@ -79,19 +81,23 @@ public class WebViewFragment extends Fragment implements ItemHandler,
     }
 
     private void setupRefreshLayout() {
-        mRefreshing = true;
+        setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(mRefreshing);
+                updateRefreshSpinner();
             }
         }, 500);
     }
 
     private void setRefreshing(boolean refreshing) {
+        mRefreshing = refreshing;
+    }
+
+    private void updateRefreshSpinner() {
         if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setRefreshing(refreshing);
+            mSwipeRefreshLayout.setRefreshing(mRefreshing);
         }
     }
 

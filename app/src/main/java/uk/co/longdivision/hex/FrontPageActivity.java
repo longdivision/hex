@@ -52,11 +52,13 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
 
     @Override
     public void onFrontPageItemsReady(List<? extends Item> items) {
-        setRefreshing(false);
         mItems = items;
         List<ItemListItemViewModel> itemListItems = ItemListItemFactory.createItemListItems(items);
         RecyclerView.Adapter mAdapter = new FrontPageListAdapter(itemListItems, this);
         mRecyclerView.setAdapter(mAdapter);
+
+        setRefreshing(false);
+        updateRefreshSpinner();
     }
 
     @Override
@@ -86,19 +88,24 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     }
 
     private void setupRefreshLayout() {
-        mRefreshing = true;
+        setRefreshing(true);
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
-                mSwipeRefreshLayout.setRefreshing(mRefreshing);
+                updateRefreshSpinner();
             }
         }, 500);
     }
 
     private void setRefreshing(boolean refreshing) {
         mRefreshing = refreshing;
-        mSwipeRefreshLayout.setRefreshing(refreshing);
+    }
+
+    private void updateRefreshSpinner() {
+        if (mSwipeRefreshLayout != null) {
+            mSwipeRefreshLayout.setRefreshing(mRefreshing);
+        }
     }
 
     private void fetchFrontPageItems() {
