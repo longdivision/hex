@@ -63,7 +63,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onPrepareOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_story_icons, menu);
         return super.onCreateOptionsMenu(menu);
     }
@@ -75,6 +75,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     @Override
     public void onPageSelected(int position) {
         mTabLayout.getTabAt(position).select();
+        mPage = Page.values()[position];
     }
 
     @Override
@@ -89,6 +90,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     @Override
     public void onTabSelected(TabLayout.Tab tab) {
         mPager.setCurrentItem(tab.getPosition());
+        mPage = Page.values()[tab.getPosition()];
     }
 
     @Override
