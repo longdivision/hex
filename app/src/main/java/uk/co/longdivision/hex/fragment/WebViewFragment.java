@@ -35,8 +35,9 @@ public class WebViewFragment extends Fragment implements ItemHandler,
 
         mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(
                 R.id.webview_layout);
+
         WebView webView = (WebView) rootView.findViewById(R.id.webView);
-        webView.setWebViewClient(new WebViewClient());
+        setupWebView(webView);
 
         setupRefreshLayout();
 
@@ -68,6 +69,13 @@ public class WebViewFragment extends Fragment implements ItemHandler,
     public void onRefresh() {
         setRefreshing(true);
         loadItem();
+    }
+
+    private void setupWebView(WebView webView) {
+        webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setBuiltInZoomControls(true);
     }
 
     private void setupRefreshLayout() {
