@@ -78,6 +78,7 @@ public class WebViewFragment extends Fragment implements ItemHandler,
         webView.getSettings().setLoadWithOverviewMode(true);
         webView.getSettings().setUseWideViewPort(true);
         webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
     }
 
     private void setupRefreshLayout() {
