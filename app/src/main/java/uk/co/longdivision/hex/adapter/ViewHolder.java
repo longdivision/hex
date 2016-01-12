@@ -7,8 +7,7 @@ import android.widget.LinearLayout;
 
 import uk.co.longdivision.hex.listener.ClickListener;
 
-public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener,
-        View.OnLongClickListener {
+public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
     public View mView;
     public ClickListener clickListener;
 
@@ -16,7 +15,6 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
         super(v);
         mView = v;
         v.setOnClickListener(this);
-        v.setOnLongClickListener(this);
     }
 
     public void setClickListener(ClickListener clickListener) {
@@ -25,12 +23,6 @@ public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        clickListener.onClick(v, getPosition(), false);
-    }
-
-    @Override
-    public boolean onLongClick(View v) {
-        clickListener.onClick(v, getPosition(), true);
-        return true;
+        clickListener.onClick(v, getAdapterPosition(), false);
     }
 }

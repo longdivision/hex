@@ -96,7 +96,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<ViewHolder> impleme
                 // Non-autolinked text will have a value of -1 for selectionStart and selectionEnd
                 if (textView.getSelectionStart() == -1 && textView.getSelectionEnd() == -1) {
                     View commentWrapper = (View) textView.getParent().getParent();
-                    commentWrapper.performLongClick();
+                    commentWrapper.performClick();
                 }
             }
         });
