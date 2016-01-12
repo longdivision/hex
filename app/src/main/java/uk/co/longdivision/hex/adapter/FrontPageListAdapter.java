@@ -5,7 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,7 +33,7 @@ public class FrontPageListAdapter extends RecyclerView.Adapter<ViewHolder> {
         mContext = parent.getContext();
 
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(mContext)
-                .inflate(R.layout.home_list_item, parent, false);
+                .inflate(R.layout.front_page_list_item, parent, false);
 
         return new ViewHolder(v);
     }
@@ -60,7 +59,6 @@ public class FrontPageListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
         Picasso.with(mContext)
                 .load("https://logo.clearbit.com/" + item.getDomain() +  "?size=256&format=png")
-                .error(R.mipmap.no_image)
                 .resize(128, 128)
                 .centerCrop()
                 .into(featureImage);

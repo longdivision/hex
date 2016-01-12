@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/featureImage">
+        android:layout_toLeftOf="@+id/featureImageContainer">
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -78,12 +78,22 @@
                 android:textSize="14sp"/>
         </LinearLayout>
     </LinearLayout>
-    <ImageView
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_weight="1"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
         android:layout_marginLeft="20dp"
-        android:id="@+id/featureImage"/>
+        android:id="@+id/featureImageContainer">
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@mipmap/no_image"/>
+        <ImageView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:id="@+id/featureImage"/>
+    </FrameLayout>
+
 </RelativeLayout>
