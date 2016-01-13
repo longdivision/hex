@@ -1,3 +1,3 @@
-# Hex
+![Hex](resources/png/Logo.png)
 
-A snappy and fun Hacker News client for Android.
+Hex is a snappy and fun Hacker News client for Android
