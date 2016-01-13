@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">Hex</string>
     <string name="front_page">Front Page</string>
-    <string name="action_settings">Settings</string>
     <string name="shareComments">Share Comments</string>
     <string name="shareArticle">Share Article</string>
+    <string name="share">Share</string>
+    <string name="no_image_available">No image available</string>
+    <string name="article_feature_image">Article feature image</string>
 </resources>

@@ -8,7 +8,7 @@
         android:layout_height="fill_parent"
         android:layout_width="wrap_content"
         android:visibility="gone"
-        android:gravity="right">
+        android:gravity="end">
         <LinearLayout
             android:id="@+id/indent_bar"
             android:layout_width="5dp"
@@ -26,7 +26,8 @@
             android:orientation="horizontal"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingTop="16dp">
+            android:paddingTop="16dp"
+            android:layout_marginBottom="8dp">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -35,7 +36,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/username"
-                    android:text="User"
                     android:textSize="14sp"
                     android:lineSpacingMultiplier="1.1" />
                 <TextView
@@ -46,8 +46,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:textSize="14sp"
-                    android:text="When"/>
+                    android:textSize="14sp"/>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/childCommentsHidden"
@@ -63,11 +62,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@android:color/white"
-                    android:textSize="14sp"
-                    android:text="101"/>
+                    android:textSize="14sp"/>
                 <LinearLayout
                     android:layout_marginTop="3dp"
-                    android:layout_marginLeft="2dp"
+                    android:layout_marginStart="2dp"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
                     android:state_pressed="false"
@@ -75,14 +73,10 @@
                     android:background="@drawable/comment"/>
             </LinearLayout>
         </RelativeLayout>
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="8dp" />
         <TextView
             android:id="@+id/text"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Comment text"
             android:textSize="15sp"
             android:textColor="@android:color/black"
             android:paddingLeft="16dp"
