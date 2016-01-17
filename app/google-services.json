@@ -1,17 +1,17 @@
 {
   "project_info": {
-    "project_id": "hacker-news-84143",
-    "project_number": "221193492513",
-    "name": "Hacker News"
+    "project_id": "hex-for-hacker-news",
+    "project_number": "832712345764",
+    "name": "Hex for Hacker News"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:221193492513:android:a7d82542fa279a9a",
-        "client_id": "android:uk.co.longdivision.hackernews",
+        "mobilesdk_app_id": "1:832712345764:android:59cb58917e41aff6",
+        "client_id": "android:com.hexforhn.hex",
         "client_type": 1,
         "android_client_info": {
-          "package_name": "uk.co.longdivision.hackernews"
+          "package_name": "com.hexforhn.hex"
         }
       },
       "oauth_client": [],
@@ -20,7 +20,7 @@
         "analytics_service": {
           "status": 2,
           "analytics_property": {
-            "tracking_id": "UA-70472239-1"
+            "tracking_id": "UA-72516790-2"
           }
         },
         "cloud_messaging_service": {
