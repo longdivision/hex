@@ -6,7 +6,7 @@ android {
     buildToolsVersion "23.0.1"
 
     defaultConfig {
-        applicationId "uk.co.longdivision.hackernews"
+        applicationId "com.hexforhn.hex"
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1

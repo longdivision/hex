@@ -1,12 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="uk.co.longdivision.hex">
+    package="com.hexforhn.hex">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <application android:allowBackup="true" android:label="@string/app_name"
         android:icon="@mipmap/ic_launcher" android:theme="@style/AppTheme"
-        android:name=".HexApplication">
+        android:name="com.hexforhn.hex.HexApplication">
         <activity
-            android:name="uk.co.longdivision.hex.FrontPageActivity"
+            android:name="com.hexforhn.hex.FrontPageActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -14,7 +14,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="uk.co.longdivision.hex.StoryActivity"
+            android:name="com.hexforhn.hex.StoryActivity"
             android:label="" >
         </activity>
     </application>
