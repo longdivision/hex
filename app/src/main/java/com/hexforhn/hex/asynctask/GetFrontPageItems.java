@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.model.Item;
-import com.hexforhn.hex.net.hackernewsapi.FrontPageService;
+import com.hexforhn.hex.net.hexapi.FrontPageService;
 
 
 public class GetFrontPageItems extends AsyncTask<Void, Integer, List<? extends Item>> {

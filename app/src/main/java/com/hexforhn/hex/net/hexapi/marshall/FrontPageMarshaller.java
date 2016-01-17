@@ -1,4 +1,4 @@
-package com.hexforhn.hex.net.hackernewsapi.marshall;
+package com.hexforhn.hex.net.hexapi.marshall;
 
 import org.json.JSONArray;
 

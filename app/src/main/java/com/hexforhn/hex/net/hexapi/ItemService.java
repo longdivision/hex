@@ -1,4 +1,4 @@
-package com.hexforhn.hex.net.hackernewsapi;
+package com.hexforhn.hex.net.hexapi;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
@@ -7,8 +7,8 @@ import com.android.volley.toolbox.RequestFuture;
 import org.json.JSONObject;
 
 import com.hexforhn.hex.model.Item;
-import com.hexforhn.hex.net.hackernewsapi.marshall.ItemMarshaller;
-import com.hexforhn.hex.net.hackernewsapi.util.RetryPolicyFactory;
+import com.hexforhn.hex.net.hexapi.marshall.ItemMarshaller;
+import com.hexforhn.hex.net.hexapi.util.RetryPolicyFactory;
 
 
 public class ItemService {

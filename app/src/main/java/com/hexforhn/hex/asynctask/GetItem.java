@@ -4,7 +4,7 @@ import android.os.AsyncTask;
 
 import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.model.Item;
-import com.hexforhn.hex.net.hackernewsapi.ItemService;
+import com.hexforhn.hex.net.hexapi.ItemService;
 
 
 public class GetItem extends AsyncTask<String, Integer, Item> {

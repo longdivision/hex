@@ -1,4 +1,4 @@
-package com.hexforhn.hex.net.hackernewsapi.util;
+package com.hexforhn.hex.net.hexapi.util;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RetryPolicy;
