@@ -115,6 +115,10 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     private void handleShareRequest() {
+        if (mItem == null) {
+            return;
+        }
+
         String intentMessage = getString(R.string.shareArticle);
         String url = ((Story) mItem).getUrl();
 
