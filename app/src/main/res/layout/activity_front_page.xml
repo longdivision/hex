@@ -18,10 +18,12 @@
     </android.support.design.widget.AppBarLayout>
     <android.support.v4.widget.SwipeRefreshLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
         android:id="@+id/front_page_layout"
         android:layout_height="match_parent"
-        tools:context=".FrontPageActivity">
+        tools:context=".FrontPageActivity"
+        android:visibility="visible">
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:orientation="vertical"
@@ -30,4 +32,6 @@
             android:layout_height="match_parent"
             android:dividerHeight="4dp"/>
     </android.support.v4.widget.SwipeRefreshLayout>
+    <include layout="@layout/content_unavailable"
+        android:visibility="gone"/>
 </LinearLayout>

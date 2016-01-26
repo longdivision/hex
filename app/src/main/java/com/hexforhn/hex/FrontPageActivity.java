@@ -8,18 +8,19 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-
-import java.util.List;
+import android.widget.Button;
 
 import com.hexforhn.hex.adapter.FrontPageListAdapter;
-import com.hexforhn.hex.asynctask.GetFrontPageItems;
 import com.hexforhn.hex.asynctask.FrontPageItemsHandler;
+import com.hexforhn.hex.asynctask.GetFrontPageItems;
 import com.hexforhn.hex.decoration.DividerItemDecoration;
 import com.hexforhn.hex.listener.ClickListener;
 import com.hexforhn.hex.model.Item;
 import com.hexforhn.hex.model.Story;
 import com.hexforhn.hex.viewmodel.ItemListItemViewModel;
 import com.hexforhn.hex.viewmodel.factory.ItemListItemFactory;
+
+import java.util.List;
 
 
 public class FrontPageActivity extends AppCompatActivity implements FrontPageItemsHandler,
@@ -31,6 +32,7 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     private final static String STORY_TITLE_INTENT_EXTRA_NAME = "storyTitle";
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
     private boolean mRefreshing;
+    private GetFrontPageItems mGetFrontPageItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +49,12 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         setupToolbar();
         setupRefreshLayout();
         setupRecyclerView();
+        setupItemsUnavailableView();
         fetchFrontPageItems();
     }
 
     @Override
-    public void onFrontPageItemsReady(List<? extends Item> items) {
+    public void onItemsReady(List<? extends Item> items) {
         mItems = items;
         List<ItemListItemViewModel> itemListItems = ItemListItemFactory.createItemListItems(items);
         RecyclerView.Adapter mAdapter = new FrontPageListAdapter(itemListItems, this);
@@ -59,6 +62,16 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
 
         setRefreshing(false);
         updateRefreshSpinner();
+        findViewById(R.id.content_unavailable).setVisibility(View.GONE);
+        findViewById(R.id.front_page_layout).setVisibility(View.VISIBLE);
+
+    }
+
+    public void onItemsUnavailable() {
+        setRefreshing(false);
+        updateRefreshSpinner();
+        findViewById(R.id.front_page_layout).setVisibility(View.GONE);
+        findViewById(R.id.content_unavailable).setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -98,6 +111,16 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         }, 500);
     }
 
+    private void setupItemsUnavailableView() {
+        Button tryAgain = (Button) findViewById(R.id.try_again);
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onRefresh();
+            }
+        });
+    }
+
     private void setRefreshing(boolean refreshing) {
         mRefreshing = refreshing;
     }
@@ -109,8 +132,11 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     }
 
     private void fetchFrontPageItems() {
-        GetFrontPageItems getFrontPageItems = new GetFrontPageItems(this, (HexApplication)
-                this.getApplication());
-        getFrontPageItems.execute();
+        if (mGetFrontPageItems != null) {
+            mGetFrontPageItems.removeHandler();
+        }
+
+        mGetFrontPageItems = new GetFrontPageItems(this, (HexApplication) this.getApplication());
+        mGetFrontPageItems.execute();
     }
 }

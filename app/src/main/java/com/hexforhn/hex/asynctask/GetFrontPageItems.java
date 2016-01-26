@@ -2,17 +2,17 @@ package com.hexforhn.hex.asynctask;
 
 import android.os.AsyncTask;
 
-import java.util.List;
-
 import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.model.Item;
 import com.hexforhn.hex.net.hexapi.FrontPageService;
+
+import java.util.List;
 
 
 public class GetFrontPageItems extends AsyncTask<Void, Integer, List<? extends Item>> {
 
     private final HexApplication mApplication;
-    private final FrontPageItemsHandler mHandler;
+    private FrontPageItemsHandler mHandler;
 
     public GetFrontPageItems(FrontPageItemsHandler handler, HexApplication application) {
         super();
@@ -27,6 +27,18 @@ public class GetFrontPageItems extends AsyncTask<Void, Integer, List<? extends I
 
     @Override
     public void onPostExecute(List<? extends Item> items) {
-        mHandler.onFrontPageItemsReady(items);
+        if (mHandler == null) {
+            return;
+        }
+
+        if (items == null) {
+            mHandler.onItemsUnavailable();
+        } else {
+            mHandler.onItemsReady(items);
+        }
+    }
+
+    public void removeHandler() {
+        this.mHandler = null;
     }
 }
