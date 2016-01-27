@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.hexforhn.hex.adapter.FrontPageListAdapter;
 import com.hexforhn.hex.asynctask.FrontPageItemsHandler;
@@ -112,6 +113,8 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     }
 
     private void setupItemsUnavailableView() {
+        ((TextView) findViewById((R.id.loading_failed_text)))
+                .setText(R.string.unable_to_load_front_page);
         Button tryAgain = (Button) findViewById(R.id.try_again);
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override

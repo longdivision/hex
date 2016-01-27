@@ -6,6 +6,7 @@
     <string name="share">Share</string>
     <string name="no_image_available">No image available</string>
     <string name="article_feature_image">Article feature image</string>
+    <string name="unable_to_load_front_page">Unable to load the front page</string>
     <string name="loading_failed_default">Unable to load content</string>
     <string name="try_again_default">Try Again</string>
 </resources>
