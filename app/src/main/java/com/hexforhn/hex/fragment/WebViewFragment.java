@@ -9,76 +9,59 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.R;
-import com.hexforhn.hex.asynctask.GetItem;
-import com.hexforhn.hex.asynctask.ItemHandler;
-import com.hexforhn.hex.model.Item;
-import com.hexforhn.hex.model.Story;
 
 
-public class WebViewFragment extends Fragment implements ItemHandler,
-        SwipeRefreshLayout.OnRefreshListener {
+public class WebViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
-    private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private boolean mRefreshing;
-    private GetItem mItemFetcher;
+    private String mUrl;
+    private WebView mWebView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        loadItem();
-
-        ViewGroup rootView = (ViewGroup) inflater.inflate( R.layout.fragment_webview, container,
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_webview, container,
                 false);
 
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(
-                R.id.webview_layout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.webview_layout);
 
-        WebView webView = (WebView) rootView.findViewById(R.id.webView);
-        setupWebView(webView);
-
+        setupWebView(rootView);
         setupRefreshLayout();
 
         return rootView;
     }
 
-    @Override
-    public void onItemReady(Item item) {
-        Story story = (Story) item;
-        WebView webView = (WebView) getView().findViewById(R.id.webView);
-        webView.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url) {
-                setRefreshing(false);
-                updateRefreshSpinner();
-            }
-        });
+    public void onUrlReady(String url) {
+        if (mUrl != null) { return; }
 
-        webView.loadUrl(story.getUrl());
-    }
-
-    private void loadItem() {
-        String storyId = this.getActivity().getIntent().getStringExtra(STORY_ID_INTENT_EXTRA_NAME);
-        HexApplication appContext = (HexApplication) this.getContext()
-                .getApplicationContext();
-        mItemFetcher = new GetItem(this, appContext);
-        mItemFetcher.execute(storyId);
+        mUrl = url;
+        mWebView.loadUrl(url);
     }
 
     @Override
     public void onRefresh() {
         setRefreshing(true);
         updateRefreshSpinner();
-        loadItem();
+        mWebView.loadUrl(mUrl);
     }
 
-    private void setupWebView(WebView webView) {
-        webView.setWebViewClient(new WebViewClient());
-        webView.getSettings().setLoadWithOverviewMode(true);
-        webView.getSettings().setUseWideViewPort(true);
-        webView.getSettings().setBuiltInZoomControls(true);
-        webView.getSettings().setDisplayZoomControls(false);
+    private void setupWebView(View rootView) {
+        mWebView = (WebView) rootView.findViewById(R.id.webView);
+
+        mWebView.setWebViewClient(new WebViewClient());
+        mWebView.getSettings().setLoadWithOverviewMode(true);
+        mWebView.getSettings().setUseWideViewPort(true);
+        mWebView.getSettings().setBuiltInZoomControls(true);
+        mWebView.getSettings().setDisplayZoomControls(false);
+
+        mWebView.setWebViewClient(new WebViewClient() {
+            public void onLoadResource(WebView view, String url) {
+                setRefreshing(false);
+                updateRefreshSpinner();
+            }
+        });
     }
 
     private void setupRefreshLayout() {
@@ -104,7 +87,6 @@ public class WebViewFragment extends Fragment implements ItemHandler,
 
     @Override
     public void onDestroyView() {
-        mItemFetcher.removeHandler();
         mSwipeRefreshLayout.setOnRefreshListener(null);
         super.onDestroy();
     }

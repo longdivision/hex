@@ -3,12 +3,11 @@ package com.hexforhn.hex.net.hexapi;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.RequestFuture;
-
-import org.json.JSONObject;
-
 import com.hexforhn.hex.model.Item;
 import com.hexforhn.hex.net.hexapi.marshall.ItemMarshaller;
 import com.hexforhn.hex.net.hexapi.util.RetryPolicyFactory;
+
+import org.json.JSONObject;
 
 
 public class ItemService {
@@ -33,7 +32,6 @@ public class ItemService {
             JSONObject response = future.get();
             return ItemMarshaller.marshall(response);
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }

@@ -25,7 +25,11 @@ public class GetItem extends AsyncTask<String, Integer, Item> {
 
     @Override
     public void onPostExecute(Item item) {
-        if (mHandler != null) {
+        if (mHandler == null) { return; }
+
+        if (item == null) {
+            mHandler.onItemUnavailable();
+        } else {
             mHandler.onItemReady(item);
         }
     }

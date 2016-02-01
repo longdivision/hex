@@ -13,8 +13,15 @@ import android.view.MenuItem;
 import com.hexforhn.hex.adapter.StorySlidePagerAdapter;
 import com.hexforhn.hex.asynctask.GetItem;
 import com.hexforhn.hex.asynctask.ItemHandler;
+import com.hexforhn.hex.fragment.CommentsFragment;
+import com.hexforhn.hex.fragment.WebViewFragment;
+import com.hexforhn.hex.model.Comment;
 import com.hexforhn.hex.model.Item;
 import com.hexforhn.hex.model.Story;
+import com.hexforhn.hex.viewmodel.CommentViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StoryActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
         ItemHandler, TabLayout.OnTabSelectedListener {
@@ -28,6 +35,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     private Page mPage;
     private final static String STORY_TITLE_INTENT_EXTRA_NAME = "storyTitle";
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
+    private GetItem mGetItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +93,42 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     @Override
     public void onItemReady(Item item) {
         this.mItem = item;
+        this.provideUrlToWebViewFragment(((Story) item).getUrl());
+        this.provideCommentsToCommentFragment(((Story) item).getComments());
+        this.provideCommentsToCommentFragment(((Story) item).getComments());
+    }
+
+    public void onItemUnavailable() {
+        ((CommentsFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(1))
+                .onCommentsUnavailable();
+    }
+
+    public void onCommentRefreshRequested() {
+        loadItem();
+    }
+
+    private void provideCommentsToCommentFragment(List<Comment> comments) {
+        List<CommentViewModel> viewComments = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            addCommentToList(comment, viewComments, 0);
+        }
+
+        ((CommentsFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(1))
+                .onCommentsReady(viewComments);
+    }
+
+    private void provideUrlToWebViewFragment(String url) {
+        ((WebViewFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(0)).onUrlReady(url);
+    }
+
+    private void addCommentToList(Comment comment, List<CommentViewModel> list, int depth) {
+        list.add(new CommentViewModel(comment.getUser(), comment.getText(), depth,
+                comment.getCommentCount(), comment.getDate()));
+
+        for(com.hexforhn.hex.model.Comment childComment : comment.getChildComments()) {
+            addCommentToList(childComment, list, depth + 1);
+        }
     }
 
     @Override
@@ -137,6 +181,17 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
         String storyId = this.getIntent().getStringExtra(STORY_ID_INTENT_EXTRA_NAME);
         HexApplication appContext = (HexApplication) this.getApplicationContext()
                 .getApplicationContext();
-        new GetItem(this, appContext).execute(storyId);
+
+        if (mGetItem != null) {
+            mGetItem.removeHandler();
+        }
+
+        mGetItem = new GetItem(this, appContext);
+        mGetItem.execute(storyId);
+    }
+
+    protected void onDestroy () {
+        super.onDestroy();
+        mGetItem.removeHandler();
     }
 }
