@@ -8,6 +8,7 @@
     <string name="article_feature_image">Article feature image</string>
     <string name="unable_to_load_front_page">Unable to load the front page</string>
     <string name="unable_to_load_comments">Unable to load comments</string>
+    <string name="unable_to_load_article">Unable to load article</string>
     <string name="loading_failed_default">Unable to load content</string>
     <string name="try_again_default">Try Again</string>
 </resources>

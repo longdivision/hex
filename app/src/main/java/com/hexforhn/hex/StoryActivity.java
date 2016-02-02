@@ -99,11 +99,17 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     public void onItemUnavailable() {
+        ((WebViewFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(0))
+                .onUrlUnavailable();
         ((CommentsFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(1))
                 .onCommentsUnavailable();
     }
 
     public void onCommentRefreshRequested() {
+        loadItem();
+    }
+
+    public void onUrlRequested() {
         loadItem();
     }
 
