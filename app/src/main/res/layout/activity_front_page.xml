@@ -20,18 +20,23 @@
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:id="@+id/front_page_layout"
+        android:id="@+id/front_page"
         android:layout_height="match_parent"
-        tools:context=".FrontPageActivity"
-        android:visibility="visible">
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view"
-            android:orientation="vertical"
-            android:scrollbars="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:dividerHeight="4dp"/>
+        tools:context=".FrontPageActivity">
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/items"
+                android:orientation="vertical"
+                android:scrollbars="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:dividerHeight="4dp"
+                android:visibility="visible"/>
+            <include
+                layout="@layout/content_unavailable"
+                android:visibility="gone"/>
+        </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
-    <include layout="@layout/content_unavailable"
-        android:visibility="gone"/>
 </LinearLayout>

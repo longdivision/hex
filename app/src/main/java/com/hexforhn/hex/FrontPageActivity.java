@@ -3,6 +3,7 @@ package com.hexforhn.hex;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,21 +33,16 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private final static String STORY_TITLE_INTENT_EXTRA_NAME = "storyTitle";
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
+    private final static int MINIMUM_SPINNER_VISIBLE_PERIOD_MS = 500;
     private boolean mRefreshing;
     private GetFrontPageItems mGetFrontPageItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_front_page);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.front_page_layout);
-
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-
-        mRecyclerView.setLayoutManager(layoutManager);
         setupToolbar();
         setupRefreshLayout();
         setupRecyclerView();
@@ -56,76 +52,113 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
 
     @Override
     public void onItemsReady(List<? extends Item> items) {
-        mItems = items;
-        List<ItemListItemViewModel> itemListItems = ItemListItemFactory.createItemListItems(items);
-        RecyclerView.Adapter mAdapter = new FrontPageListAdapter(itemListItems, this);
-        mRecyclerView.setAdapter(mAdapter);
-
-        setRefreshing(false);
-        updateRefreshSpinner();
-        findViewById(R.id.content_unavailable).setVisibility(View.GONE);
-        findViewById(R.id.front_page_layout).setVisibility(View.VISIBLE);
-
+        setItems(items);
+        displayItems(items);
+        stopRefreshIndicator();
+        enableRefresh();
+        hideContentUnavailable();
+        showItems();
     }
 
+    @Override
     public void onItemsUnavailable() {
-        setRefreshing(false);
-        updateRefreshSpinner();
-        findViewById(R.id.front_page_layout).setVisibility(View.GONE);
-        findViewById(R.id.content_unavailable).setVisibility(View.VISIBLE);
+        stopRefreshIndicator();
+        disableRefresh();
+        hideItems();
+        showContentUnavailable();
     }
 
     @Override
     public void onClick(View v, int position, boolean isLongClick) {
-        Intent storyIntent = new Intent(this, StoryActivity.class);
-        storyIntent.putExtra(STORY_TITLE_INTENT_EXTRA_NAME, ((Story) mItems.get(position))
-                .getTitle());
-        storyIntent.putExtra(STORY_ID_INTENT_EXTRA_NAME, mItems.get(position).getId());
-        startActivity(storyIntent);
+        openStoryAtPosition(position);
     }
 
     @Override
     public void onRefresh() {
-        setRefreshing(true);
+        startRefreshIndicator();
         fetchFrontPageItems();
     }
 
     private void setupToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(R.string.front_page);
-    }
-
-    private void setupRecyclerView() {
-        mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
-        mRecyclerView.setHasFixedSize(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) { actionBar.setTitle(R.string.front_page); }
     }
 
     private void setupRefreshLayout() {
-        setRefreshing(true);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.front_page);
         mSwipeRefreshLayout.setOnRefreshListener(this);
+        startRefreshIndicator();
         mSwipeRefreshLayout.postDelayed(new Runnable() {
             @Override
             public void run() {
                 updateRefreshSpinner();
             }
-        }, 500);
+        }, MINIMUM_SPINNER_VISIBLE_PERIOD_MS);
+    }
+
+    private void setupRecyclerView() {
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mRecyclerView = (RecyclerView) findViewById(R.id.items);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
+        mRecyclerView.setHasFixedSize(true);
     }
 
     private void setupItemsUnavailableView() {
-        ((TextView) findViewById((R.id.loading_failed_text)))
-                .setText(R.string.unable_to_load_front_page);
+        TextView loadingFailed = (TextView) findViewById(R.id.loading_failed_text);
+        loadingFailed.setText(R.string.unable_to_load_front_page);
+
         Button tryAgain = (Button) findViewById(R.id.try_again);
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onRefresh();
+                fetchFrontPageItems();
             }
         });
     }
 
-    private void setRefreshing(boolean refreshing) {
-        mRefreshing = refreshing;
+    private void displayItems(List<? extends Item> items) {
+        List<ItemListItemViewModel> itemListItems = ItemListItemFactory.createItemListItems(items);
+        RecyclerView.Adapter mAdapter = new FrontPageListAdapter(itemListItems, this);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void showItems() {
+        findViewById(R.id.items).setVisibility(View.VISIBLE);
+    }
+
+    private void hideItems() {
+        findViewById(R.id.items).setVisibility(View.GONE);
+    }
+
+    private void showContentUnavailable() {
+        findViewById(R.id.content_unavailable).setVisibility(View.VISIBLE);
+    }
+
+    private void hideContentUnavailable() {
+        findViewById(R.id.content_unavailable).setVisibility(View.GONE);
+    }
+
+    private void enableRefresh() {
+        mSwipeRefreshLayout.setEnabled(true);
+    }
+
+    private void disableRefresh() {
+        mSwipeRefreshLayout.setEnabled(false);
+    }
+
+    private void startRefreshIndicator() {
+        mRefreshing = true;
+        updateRefreshSpinner();
+    }
+
+    private void stopRefreshIndicator() {
+        mRefreshing = false;
+        updateRefreshSpinner();
     }
 
     private void updateRefreshSpinner() {
@@ -141,5 +174,18 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
 
         mGetFrontPageItems = new GetFrontPageItems(this, (HexApplication) this.getApplication());
         mGetFrontPageItems.execute();
+    }
+
+    private void setItems(List<? extends Item> items) {
+        mItems = items;
+    }
+
+    private void openStoryAtPosition(int position) {
+        Intent storyIntent = new Intent(this, StoryActivity.class);
+        Story story =  (Story) mItems.get(position);
+        storyIntent.putExtra(STORY_TITLE_INTENT_EXTRA_NAME, story.getTitle());
+        storyIntent.putExtra(STORY_ID_INTENT_EXTRA_NAME, story.getId());
+
+        startActivity(storyIntent);
     }
 }
