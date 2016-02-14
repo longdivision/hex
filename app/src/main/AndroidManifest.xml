@@ -8,7 +8,7 @@
         android:icon="@mipmap/ic_launcher" android:theme="@style/AppTheme"
         android:name="com.hexforhn.hex.HexApplication">
         <activity
-            android:name="com.hexforhn.hex.FrontPageActivity"
+            android:name=".activity.frontpage.FrontPageActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.hexforhn.hex.StoryActivity"
+            android:name=".activity.story.StoryActivity"
             android:label="" >
         </activity>
     </application>

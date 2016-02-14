@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.hexforhn.hex.R;
-import com.hexforhn.hex.StoryActivity;
+import com.hexforhn.hex.activity.story.StoryActivity;
 import com.hexforhn.hex.adapter.CommentListAdapter;
 import com.hexforhn.hex.viewmodel.CommentViewModel;
 

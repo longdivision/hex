@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.hexforhn.hex.R;
-import com.hexforhn.hex.StoryActivity;
+import com.hexforhn.hex.activity.story.StoryActivity;
 
 
 public class WebViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {

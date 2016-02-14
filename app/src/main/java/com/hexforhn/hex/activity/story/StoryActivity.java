@@ -1,4 +1,4 @@
-package com.hexforhn.hex;
+package com.hexforhn.hex.activity.story;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.hexforhn.hex.HexApplication;
+import com.hexforhn.hex.R;
 import com.hexforhn.hex.adapter.StorySlidePagerAdapter;
 import com.hexforhn.hex.asynctask.GetItem;
 import com.hexforhn.hex.asynctask.ItemHandler;

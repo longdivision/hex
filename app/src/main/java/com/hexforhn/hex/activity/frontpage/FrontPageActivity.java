@@ -1,7 +1,9 @@
-package com.hexforhn.hex;
+package com.hexforhn.hex.activity.frontpage;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +14,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.hexforhn.hex.HexApplication;
+import com.hexforhn.hex.R;
+import com.hexforhn.hex.activity.story.StoryActivity;
 import com.hexforhn.hex.adapter.FrontPageListAdapter;
 import com.hexforhn.hex.asynctask.FrontPageItemsHandler;
 import com.hexforhn.hex.asynctask.GetFrontPageItems;
@@ -26,7 +31,7 @@ import java.util.List;
 
 
 public class FrontPageActivity extends AppCompatActivity implements FrontPageItemsHandler,
-        ClickListener, SwipeRefreshLayout.OnRefreshListener {
+        FrontPageStateHandler, ClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     private RecyclerView mRecyclerView;
     private List<? extends Item> mItems;
@@ -36,6 +41,7 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     private final static int MINIMUM_SPINNER_VISIBLE_PERIOD_MS = 500;
     private boolean mRefreshing;
     private GetFrontPageItems mGetFrontPageItems;
+    private FrontPageStateMachine mStateMachine;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +53,42 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         setupRefreshLayout();
         setupRecyclerView();
         setupItemsUnavailableView();
+        setupStateMachine();
         fetchFrontPageItems();
     }
 
     @Override
-    public void onItemsReady(List<? extends Item> items) {
-        setItems(items);
-        displayItems(items);
+    public void onLoadRequested() {
+        fetchFrontPageItems();
+        startRefreshIndicator();
+    }
+
+    @Override
+    public void onLoadSucceeded() {
+        stopRefreshIndicator();
+        displayItems(mItems);
+        hideContentUnavailable();
+        showItems();
+        enableRefresh();
+    }
+
+    @Override
+    public void onLoadFailed() {
+        stopRefreshIndicator();
+        disableRefresh();
+        hideItems();
+        showContentUnavailable();
+    }
+
+    @Override
+    public void onRefreshRequested() {
+        startRefreshIndicator();
+        fetchFrontPageItems();
+    }
+
+    @Override
+    public void onRefreshSucceeded() {
+        displayItems(mItems);
         stopRefreshIndicator();
         enableRefresh();
         hideContentUnavailable();
@@ -61,11 +96,20 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     }
 
     @Override
-    public void onItemsUnavailable() {
+    public void onRefreshFailed() {
         stopRefreshIndicator();
-        disableRefresh();
-        hideItems();
-        showContentUnavailable();
+        showRefreshFailedSnackbar();
+    }
+
+    @Override
+    public void onItemsReady(List<? extends Item> items) {
+        setItems(items);
+        mStateMachine.transitionTo(FrontPageStateMachine.State.ITEMS_LOADED);
+    }
+
+    @Override
+    public void onItemsUnavailable() {
+        mStateMachine.transitionTo(FrontPageStateMachine.State.ITEMS_UNAVAILABLE);
     }
 
     @Override
@@ -75,8 +119,7 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
 
     @Override
     public void onRefresh() {
-        startRefreshIndicator();
-        fetchFrontPageItems();
+        mStateMachine.transitionTo(FrontPageStateMachine.State.REFRESHING);
     }
 
     private void setupToolbar() {
@@ -116,9 +159,14 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fetchFrontPageItems();
+                mStateMachine.transitionTo(FrontPageStateMachine.State.REFRESHING);
             }
         });
+    }
+
+    private void setupStateMachine() {
+        mStateMachine = new FrontPageStateMachine(this, false);
+        mStateMachine.transitionTo(FrontPageStateMachine.State.ITEMS_LOADING);
     }
 
     private void displayItems(List<? extends Item> items) {
@@ -187,5 +235,15 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         storyIntent.putExtra(STORY_ID_INTENT_EXTRA_NAME, story.getId());
 
         startActivity(storyIntent);
+    }
+
+    private void showRefreshFailedSnackbar() {
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.front_page_container),
+                R.string.unable_to_load_front_page, Snackbar.LENGTH_LONG);
+        TextView snackbarTextView = (TextView) snackbar.getView()
+                .findViewById(android.support.design.R.id.snackbar_text);
+        snackbarTextView.setTextColor(Color.WHITE);
+
+        snackbar.show();
     }
 }

@@ -7,6 +7,8 @@ import android.test.ActivityTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.widget.TextView;
 
+import com.hexforhn.hex.activity.frontpage.FrontPageActivity;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
