@@ -27,89 +27,77 @@ import com.hexforhn.hex.model.Story;
 import com.hexforhn.hex.viewmodel.ItemListItemViewModel;
 import com.hexforhn.hex.viewmodel.factory.ItemListItemFactory;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 
 public class FrontPageActivity extends AppCompatActivity implements FrontPageItemsHandler,
-        FrontPageStateHandler, ClickListener, SwipeRefreshLayout.OnRefreshListener {
+        FrontPage, ClickListener, RefreshHandler {
 
     private RecyclerView mRecyclerView;
-    private List<? extends Item> mItems;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private List<? extends Item> mItems = new ArrayList<>();
+    private SwipeRefreshManager mSwipeRefreshManager;
     private final static String STORY_TITLE_INTENT_EXTRA_NAME = "storyTitle";
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
-    private final static int MINIMUM_SPINNER_VISIBLE_PERIOD_MS = 500;
-    private boolean mRefreshing;
     private GetFrontPageItems mGetFrontPageItems;
-    private FrontPageStateMachine mStateMachine;
+    private FrontPageState mState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_front_page);
-
         setupToolbar();
-        setupRefreshLayout();
         setupRecyclerView();
         setupItemsUnavailableView();
-        setupStateMachine();
-        fetchFrontPageItems();
+        setupRefreshLayout();
+        setupState();
     }
 
     @Override
-    public void onLoadRequested() {
+    public void onEnterLoading() {
         fetchFrontPageItems();
-        startRefreshIndicator();
+        mSwipeRefreshManager.start();
     }
 
     @Override
-    public void onLoadSucceeded() {
-        stopRefreshIndicator();
+    public void onEnterLoaded() {
         displayItems(mItems);
         hideContentUnavailable();
         showItems();
-        enableRefresh();
+        mSwipeRefreshManager.stop();
+        mSwipeRefreshManager.enable();
     }
 
     @Override
-    public void onLoadFailed() {
-        stopRefreshIndicator();
-        disableRefresh();
-        hideItems();
-        showContentUnavailable();
-    }
-
-    @Override
-    public void onRefreshRequested() {
-        startRefreshIndicator();
+    public void onEnterRefresh() {
+        mSwipeRefreshManager.start();
+        mSwipeRefreshManager.disable();
         fetchFrontPageItems();
     }
 
     @Override
-    public void onRefreshSucceeded() {
-        displayItems(mItems);
-        stopRefreshIndicator();
-        enableRefresh();
-        hideContentUnavailable();
-        showItems();
-    }
-
-    @Override
-    public void onRefreshFailed() {
-        stopRefreshIndicator();
+    public void onEnterUnavailable() {
+        mSwipeRefreshManager.stop();
+        if (mItems.isEmpty()) {
+            hideItems();
+            mSwipeRefreshManager.disable();
+            showContentUnavailable();
+        } else {
+            mSwipeRefreshManager.enable();
+        }
         showRefreshFailedSnackbar();
     }
 
     @Override
     public void onItemsReady(List<? extends Item> items) {
         setItems(items);
-        mStateMachine.transitionTo(FrontPageStateMachine.State.ITEMS_LOADED);
+        mState.sendEvent(FrontPageState.Event.LOAD_SUCCEEDED);
     }
 
     @Override
     public void onItemsUnavailable() {
-        mStateMachine.transitionTo(FrontPageStateMachine.State.ITEMS_UNAVAILABLE);
+        mState.sendEvent(FrontPageState.Event.LOAD_FAILED);
     }
 
     @Override
@@ -119,7 +107,7 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
 
     @Override
     public void onRefresh() {
-        mStateMachine.transitionTo(FrontPageStateMachine.State.REFRESHING);
+        mState.sendEvent(FrontPageState.Event.LOAD_REQUESTED);
     }
 
     private void setupToolbar() {
@@ -130,15 +118,8 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     }
 
     private void setupRefreshLayout() {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.front_page);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        startRefreshIndicator();
-        mSwipeRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                updateRefreshSpinner();
-            }
-        }, MINIMUM_SPINNER_VISIBLE_PERIOD_MS);
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) findViewById(R.id.refresh);
+        mSwipeRefreshManager = new SwipeRefreshManager(refreshLayout, this);
     }
 
     private void setupRecyclerView() {
@@ -149,6 +130,9 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
         mRecyclerView.setHasFixedSize(true);
+
+        RecyclerView.Adapter mAdapter = new FrontPageListAdapter(Collections.EMPTY_LIST, this);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void setupItemsUnavailableView() {
@@ -159,14 +143,14 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mStateMachine.transitionTo(FrontPageStateMachine.State.REFRESHING);
+                mState.sendEvent(FrontPageState.Event.LOAD_REQUESTED);
             }
         });
     }
 
-    private void setupStateMachine() {
-        mStateMachine = new FrontPageStateMachine(this, false);
-        mStateMachine.transitionTo(FrontPageStateMachine.State.ITEMS_LOADING);
+    private void setupState() {
+        mState = new FrontPageState(this);
+        mState.sendEvent(FrontPageState.Event.LOAD_REQUESTED);
     }
 
     private void displayItems(List<? extends Item> items) {
@@ -189,30 +173,6 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
 
     private void hideContentUnavailable() {
         findViewById(R.id.content_unavailable).setVisibility(View.GONE);
-    }
-
-    private void enableRefresh() {
-        mSwipeRefreshLayout.setEnabled(true);
-    }
-
-    private void disableRefresh() {
-        mSwipeRefreshLayout.setEnabled(false);
-    }
-
-    private void startRefreshIndicator() {
-        mRefreshing = true;
-        updateRefreshSpinner();
-    }
-
-    private void stopRefreshIndicator() {
-        mRefreshing = false;
-        updateRefreshSpinner();
-    }
-
-    private void updateRefreshSpinner() {
-        if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setRefreshing(mRefreshing);
-        }
     }
 
     private void fetchFrontPageItems() {

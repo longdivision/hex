@@ -1,10 +1,15 @@
-package com.hexforhn.hex.adapter.helper;
+package com.hexfornh.hex.adapter.helper;
 
-import junit.framework.TestCase;
+import com.hexforhn.hex.adapter.helper.TextHelper;
 
-public class TextHelperTest extends TestCase {
+import org.junit.Test;
 
-    public void testRemoveTrailingNewlinesFromText() throws Exception {
+import static junit.framework.Assert.assertEquals;
+
+public class TextHelperTest {
+
+    @Test
+    public void removesTrailingNewlinesFromText() throws Exception {
         assertEquals("", TextHelper.removeTrailingNewlinesFromText(null));
         assertEquals("", TextHelper.removeTrailingNewlinesFromText(""));
         assertEquals("Text", TextHelper.removeTrailingNewlinesFromText("Text"));
