@@ -24,6 +24,8 @@ import com.hexforhn.hex.decoration.DividerItemDecoration;
 import com.hexforhn.hex.listener.ClickListener;
 import com.hexforhn.hex.model.Item;
 import com.hexforhn.hex.model.Story;
+import com.hexforhn.hex.util.view.RefreshHandler;
+import com.hexforhn.hex.util.view.SwipeRefreshManager;
 import com.hexforhn.hex.viewmodel.ItemListItemViewModel;
 import com.hexforhn.hex.viewmodel.factory.ItemListItemFactory;
 
@@ -33,7 +35,7 @@ import java.util.List;
 
 
 public class FrontPageActivity extends AppCompatActivity implements FrontPageItemsHandler,
-        FrontPage, ClickListener, RefreshHandler {
+        FrontPageStateHandler, ClickListener, RefreshHandler {
 
     private RecyclerView mRecyclerView;
     private List<? extends Item> mItems = new ArrayList<>();
@@ -85,8 +87,8 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
             showContentUnavailable();
         } else {
             mSwipeRefreshManager.enable();
+            showRefreshFailedSnackbar();
         }
-        showRefreshFailedSnackbar();
     }
 
     @Override

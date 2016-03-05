@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.hexforhn.hex.fragment.CommentsFragment;
-import com.hexforhn.hex.fragment.WebViewFragment;
+import com.hexforhn.hex.fragment.article.ArticleFragment;
+import com.hexforhn.hex.fragment.comments.CommentsFragment;
 
 import java.util.ArrayList;
 
@@ -17,7 +17,7 @@ public class StorySlidePagerAdapter extends FragmentStatePagerAdapter {
         super(fm);
 
         mFragments = new ArrayList<>();
-        mFragments.add(new WebViewFragment());
+        mFragments.add(new ArticleFragment());
         mFragments.add(new CommentsFragment());
     }
 

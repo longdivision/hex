@@ -1,4 +1,4 @@
-package com.hexforhn.hex.fragment;
+package com.hexforhn.hex.fragment.comments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,18 +14,22 @@ import android.widget.TextView;
 import com.hexforhn.hex.R;
 import com.hexforhn.hex.activity.story.StoryActivity;
 import com.hexforhn.hex.adapter.CommentListAdapter;
+import com.hexforhn.hex.util.view.RefreshHandler;
+import com.hexforhn.hex.util.view.SwipeRefreshManager;
 import com.hexforhn.hex.viewmodel.CommentViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class CommentsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class CommentsFragment extends Fragment implements CommentsStateHandler, RefreshHandler {
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private boolean mRefreshing;
+    private SwipeRefreshManager mSwipeRefreshManager;
+    private CommentsState mCommentsState;
+    private List<CommentViewModel> mComments;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -39,56 +43,70 @@ public class CommentsFragment extends Fragment implements SwipeRefreshLayout.OnR
         mRecyclerView.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        mComments = new ArrayList<>();
 
         setupItemsUnavailableView(rootView);
         setupRefreshLayout(rootView);
+        setupState();
 
         return rootView;
     }
 
-    public void onCommentsReady(List<CommentViewModel> comments) {
-        mAdapter = new CommentListAdapter(getActivity(), comments);
+    @Override
+    public void onEnterLoading() {
+        requestNewComments();
+        mSwipeRefreshManager.start();
+        mSwipeRefreshManager.disable();
+    }
+
+    @Override
+    public void onEnterLoaded() {
+        mAdapter = new CommentListAdapter(getActivity(), mComments);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
 
-        setRefreshing(false);
-        updateRefreshSpinner();
+        mSwipeRefreshManager.stop();
+        mSwipeRefreshManager.enable();
         showCommentList();
+        hideCommentsUnavailable();
+    }
+
+    @Override
+    public void onEnterRefresh() {
+        requestNewComments();
+        mSwipeRefreshManager.start();
+    }
+
+    @Override
+    public void onEnterUnavailable() {
+        mSwipeRefreshManager.stop();
+        if (mComments.isEmpty()) {
+            mSwipeRefreshManager.disable();
+            hideCommentList();
+            showCommentsUnavailable();
+        } else {
+            mSwipeRefreshManager.enable();
+        }
+    }
+
+    public void onCommentsReady(List<CommentViewModel> comments) {
+        mComments = comments;
+        mCommentsState.sendEvent(CommentsState.Event.COMMENTS_PROVIDED);
     }
 
     public void onCommentsUnavailable() {
-        setRefreshing(false);
-        updateRefreshSpinner();
-        showCommentsUnavailable();
+        mCommentsState.sendEvent(CommentsState.Event.COMMENTS_UNAVAILABLE);
     }
 
     @Override
     public void onRefresh() {
-        setRefreshing(true);
-        updateRefreshSpinner();
-        requestNewComments();
+        mCommentsState.sendEvent(CommentsState.Event.LOAD_REQUESTED);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroy();
-        mSwipeRefreshLayout.setOnRefreshListener(null);
-    }
-
-    private void setupRefreshLayout(View rootView) {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(
-                R.id.comment_layout);
-
-        setRefreshing(true);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                updateRefreshSpinner();
-            }
-        }, 500);
+    private void setupState() {
+        mCommentsState = new CommentsState(this);
     }
 
     private void setupItemsUnavailableView(View rootView) {
@@ -98,29 +116,30 @@ public class CommentsFragment extends Fragment implements SwipeRefreshLayout.OnR
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                requestNewComments();
+                mCommentsState.sendEvent(CommentsState.Event.LOAD_REQUESTED);
             }
         });
     }
 
-    private void setRefreshing(boolean refreshing) {
-        mRefreshing = refreshing;
-    }
-
-    private void updateRefreshSpinner() {
-        if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setRefreshing(mRefreshing);
-        }
+    private void setupRefreshLayout(View rootView) {
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        mSwipeRefreshManager = new SwipeRefreshManager(refreshLayout, this);
     }
 
     private void showCommentList() {
-        getView().findViewById(R.id.comment_layout).setVisibility(View.VISIBLE);
-        getView().findViewById(R.id.content_unavailable).setVisibility(View.GONE);
+        getView().findViewById(R.id.refresh).setVisibility(View.VISIBLE);
+    }
+
+    private void hideCommentList() {
+        getView().findViewById(R.id.refresh).setVisibility(View.GONE);
     }
 
     private void showCommentsUnavailable() {
-        getView().findViewById(R.id.comment_layout).setVisibility(View.GONE);
         getView().findViewById(R.id.content_unavailable).setVisibility(View.VISIBLE);
+    }
+
+    private void hideCommentsUnavailable() {
+        getView().findViewById(R.id.content_unavailable).setVisibility(View.GONE);
     }
 
     private void requestNewComments() {

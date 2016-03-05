@@ -1,10 +1,11 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/comments"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     android:orientation="vertical">
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/comment_layout"
+        android:id="@+id/refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">

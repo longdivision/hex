@@ -1,7 +1,9 @@
 package com.hexforhn.hex.activity.story;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -9,14 +11,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.R;
 import com.hexforhn.hex.adapter.StorySlidePagerAdapter;
 import com.hexforhn.hex.asynctask.GetItem;
 import com.hexforhn.hex.asynctask.ItemHandler;
-import com.hexforhn.hex.fragment.CommentsFragment;
-import com.hexforhn.hex.fragment.WebViewFragment;
+import com.hexforhn.hex.fragment.article.ArticleFragment;
+import com.hexforhn.hex.fragment.comments.CommentsFragment;
 import com.hexforhn.hex.model.Comment;
 import com.hexforhn.hex.model.Item;
 import com.hexforhn.hex.model.Story;
@@ -26,24 +29,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StoryActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
-        ItemHandler, TabLayout.OnTabSelectedListener {
+        ItemHandler, TabLayout.OnTabSelectedListener, StoryStateHandler {
 
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
     private Item mItem;
     private TabLayout mTabLayout;
-
     private enum Page { WEBVIEW, COMMENTS }
     private Page mPage;
     private final static String STORY_TITLE_INTENT_EXTRA_NAME = "storyTitle";
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
     private GetItem mGetItem;
+    private StoryState mState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        loadItem();
 
         setContentView(R.layout.activity_story);
 
@@ -58,11 +59,33 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
         mPager.addOnPageChangeListener(this);
 
         mPage = Page.WEBVIEW;
+
+        mState = new StoryState(this);
+        mState.sendEvent(StoryState.Event.LOAD_REQUESTED);
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    {
+    public void onEnterLoading() {
+        loadItem();
+    }
+
+    @Override
+    public void onEnterLoaded() {
+        this.provideUrlToWebViewFragment(((Story) mItem).getUrl());
+        this.provideCommentsToCommentFragment(((Story) mItem).getComments());
+    }
+
+    @Override
+    public void onEnterUnavailable() {
+        showRefreshFailedSnackbar();
+        ((ArticleFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(0))
+                .onUrlUnavailable();
+        ((CommentsFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(1))
+                .onCommentsUnavailable();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             this.finish();
         } else if (item.getItemId() == R.id.action_share) {
@@ -95,24 +118,19 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     @Override
     public void onItemReady(Item item) {
         this.mItem = item;
-        this.provideUrlToWebViewFragment(((Story) item).getUrl());
-        this.provideCommentsToCommentFragment(((Story) item).getComments());
-        this.provideCommentsToCommentFragment(((Story) item).getComments());
+        mState.sendEvent(StoryState.Event.LOAD_SUCCEEDED);
     }
 
     public void onItemUnavailable() {
-        ((WebViewFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(0))
-                .onUrlUnavailable();
-        ((CommentsFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(1))
-                .onCommentsUnavailable();
+        mState.sendEvent(StoryState.Event.LOAD_FAILED);
     }
 
     public void onCommentRefreshRequested() {
-        loadItem();
+        mState.sendEvent(StoryState.Event.LOAD_REQUESTED);
     }
 
     public void onUrlRequested() {
-        loadItem();
+        mState.sendEvent(StoryState.Event.LOAD_REQUESTED);
     }
 
     private void provideCommentsToCommentFragment(List<Comment> comments) {
@@ -127,7 +145,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     private void provideUrlToWebViewFragment(String url) {
-        ((WebViewFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(0)).onUrlReady(url);
+        ((ArticleFragment) ((StorySlidePagerAdapter) mPagerAdapter).getItem(0)).onUrlReady(url);
     }
 
     private void addCommentToList(Comment comment, List<CommentViewModel> list, int depth) {
@@ -201,5 +219,15 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     protected void onDestroy () {
         super.onDestroy();
         mGetItem.removeHandler();
+    }
+
+    private void showRefreshFailedSnackbar() {
+        Snackbar snackbar = Snackbar.make(findViewById(R.id.comments),
+                R.string.unable_to_load_story, Snackbar.LENGTH_LONG);
+        TextView snackbarTextView = (TextView) snackbar.getView()
+                .findViewById(android.support.design.R.id.snackbar_text);
+        snackbarTextView.setTextColor(Color.WHITE);
+
+        snackbar.show();
     }
 }

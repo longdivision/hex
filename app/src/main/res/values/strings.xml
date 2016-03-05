@@ -11,4 +11,5 @@
     <string name="unable_to_load_article">Unable to load article</string>
     <string name="loading_failed_default">Unable to load content</string>
     <string name="try_again_default">Try Again</string>
+    <string name="unable_to_load_story">Unable to load story</string>
 </resources>

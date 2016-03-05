@@ -1,4 +1,4 @@
-package com.hexforhn.hex.activity.frontpage;
+package com.hexforhn.hex.util.view;
 
 public interface RefreshHandler {
     void onRefresh();

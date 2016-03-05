@@ -1,4 +1,4 @@
-package com.hexforhn.hex.fragment;
+package com.hexforhn.hex.fragment.article;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,54 +15,90 @@ import android.widget.TextView;
 
 import com.hexforhn.hex.R;
 import com.hexforhn.hex.activity.story.StoryActivity;
+import com.hexforhn.hex.util.view.RefreshHandler;
+import com.hexforhn.hex.util.view.SwipeRefreshManager;
 
 
-public class WebViewFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class ArticleFragment extends Fragment implements ArticleStateHandler, RefreshHandler {
 
-    private SwipeRefreshLayout mSwipeRefreshLayout;
-    private boolean mRefreshing;
+    private SwipeRefreshManager mSwipeRefreshManager;
     private String mUrl;
     private WebView mWebView;
+    private ArticleState mState;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_webview, container,
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_article, container,
                 false);
 
         setupWebView(rootView);
         setupRefreshLayout(rootView);
         setupArticleUnavailableView(rootView);
-
+        setupState();
         return rootView;
     }
 
-    public void onUrlReady(String url) {
-        if (mUrl != null) { return; }
+    @Override
+    public void onEnterLoadingUrl() {
+        requestUrl();
+        mSwipeRefreshManager.start();
+        mSwipeRefreshManager.disable();
+    }
 
+    @Override
+    public void onEnterLoadingContent() {
+        loadPage();
+        mSwipeRefreshManager.start();
+        mSwipeRefreshManager.disable();
+    }
+
+    @Override
+    public void onEnterUrlUnavailable() {
+        mSwipeRefreshManager.stop();
+        mSwipeRefreshManager.disable();
+        showArticleUnavailable();
+        hideWebView();
+    }
+
+    @Override
+    public void onEnterContentUnavailable() {
+        mSwipeRefreshManager.stop();
+        mSwipeRefreshManager.disable();
+        showArticleUnavailable();
+        hideWebView();
+    }
+
+    @Override
+    public void onEnterContentLoaded() {
+        mSwipeRefreshManager.stop();
+        mSwipeRefreshManager.enable();
+        showWebView();
+        hideArticleUnavaialeble();
+    }
+
+    public void onUrlReady(String url) {
         mUrl = url;
-        reloadPage();
+        mState.sendEvent(ArticleState.Event.URL_PROVIDED);
     }
 
     public void onUrlUnavailable() {
-        if (mUrl == null) {
-            setRefreshing(false);
-            updateRefreshSpinner();
-            showArticleUnavailable();
-        }
+        mState.sendEvent(ArticleState.Event.URL_UNAVAILABLE);
     }
 
     @Override
     public void onRefresh() {
-        setRefreshing(true);
-        updateRefreshSpinner();
-        reloadPage();
+        mState.sendEvent(ArticleState.Event.LOAD_REQUESTED);
     }
 
     @Override
     public void onDestroyView() {
-        mSwipeRefreshLayout.setOnRefreshListener(null);
         super.onDestroy();
+    }
+
+    private void setupState() {
+        mState = new ArticleState(this);
+        mState.sendEvent(ArticleState.Event.URL_REQUESTED);
     }
 
     private void setupWebView(View rootView) {
@@ -76,29 +112,14 @@ public class WebViewFragment extends Fragment implements SwipeRefreshLayout.OnRe
 
         mWebView.setWebViewClient(new WebViewClient() {
             public void onLoadResource(WebView view, String url) {
-                showWebView();
-                setRefreshing(false);
-                updateRefreshSpinner();
+                mState.sendEvent(ArticleState.Event.LOAD_SUCCEEDED);
             }
 
             public void onReceivedError(WebView view, WebResourceRequest request,
                                         WebResourceError error) {
-                showArticleUnavailable();
+                mState.sendEvent(ArticleState.Event.LOAD_FAILED);
             }
         });
-    }
-
-    private void setupRefreshLayout(View rootView) {
-        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.webview_layout);
-
-        setRefreshing(true);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                updateRefreshSpinner();
-            }
-        }, 500);
     }
 
     private void setupArticleUnavailableView(View rootView) {
@@ -108,36 +129,33 @@ public class WebViewFragment extends Fragment implements SwipeRefreshLayout.OnRe
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mUrl == null) {
-                    requestUrl();
-                } else {
-                    reloadPage();
-                }
+                mState.sendEvent(ArticleState.Event.LOAD_REQUESTED);
             }
         });
     }
 
-    private void setRefreshing(boolean refreshing) {
-        mRefreshing = refreshing;
+    private void setupRefreshLayout(View rootView) {
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        mSwipeRefreshManager = new SwipeRefreshManager(refreshLayout, this);
     }
 
-    private void updateRefreshSpinner() {
-        if (mSwipeRefreshLayout != null) {
-            mSwipeRefreshLayout.setRefreshing(mRefreshing);
-        }
+    private void hideWebView() {
+        getView().findViewById(R.id.refresh).setVisibility(View.GONE);
     }
 
     private void showWebView() {
-        getView().findViewById(R.id.webview_layout).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.refresh).setVisibility(View.VISIBLE);
+    }
+
+    private void hideArticleUnavaialeble() {
         getView().findViewById(R.id.content_unavailable).setVisibility(View.GONE);
     }
 
     private void showArticleUnavailable() {
-        getView().findViewById(R.id.webview_layout).setVisibility(View.GONE);
         getView().findViewById(R.id.content_unavailable).setVisibility(View.VISIBLE);
     }
 
-    private void reloadPage() {
+    private void loadPage() {
         mWebView.loadUrl(mUrl);
     }
 
