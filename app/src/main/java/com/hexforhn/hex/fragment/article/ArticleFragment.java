@@ -162,4 +162,13 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
     private void requestUrl() {
         ((StoryActivity) getActivity()).onUrlRequested();
     }
+
+    public boolean handleBack() {
+        if (mWebView.canGoBack()) {
+            mWebView.goBack();
+            return true;
+        }
+
+        return false;
+    }
 }

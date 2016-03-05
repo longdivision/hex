@@ -230,4 +230,16 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
 
         snackbar.show();
     }
+
+    @Override
+    public void onBackPressed() {
+        ArticleFragment articleFragment = (ArticleFragment) (((StorySlidePagerAdapter)
+                mPagerAdapter).getItem(0));
+        
+        boolean backHandled = articleFragment.handleBack();
+
+        if (!backHandled) {
+            super.onBackPressed();
+        }
+    }
 }
