@@ -111,7 +111,7 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
         mWebView.getSettings().setDisplayZoomControls(false);
 
         mWebView.setWebViewClient(new WebViewClient() {
-            public void onLoadResource(WebView view, String url) {
+            public void onPageFinished(WebView view, String url) {
                 mState.sendEvent(ArticleState.Event.LOAD_SUCCEEDED);
             }
 
