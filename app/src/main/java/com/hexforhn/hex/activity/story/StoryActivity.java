@@ -233,10 +233,15 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
 
     @Override
     public void onBackPressed() {
-        ArticleFragment articleFragment = (ArticleFragment) (((StorySlidePagerAdapter)
-                mPagerAdapter).getItem(0));
-        
-        boolean backHandled = articleFragment.handleBack();
+        boolean backHandled = false;
+
+        if (mPage.equals(Page.WEBVIEW)) {
+            ArticleFragment articleFragment = (ArticleFragment) (((StorySlidePagerAdapter)
+                    mPagerAdapter).getItem(0));
+
+            backHandled = articleFragment.handleBack();
+        }
+
 
         if (!backHandled) {
             super.onBackPressed();
