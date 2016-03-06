@@ -1,15 +1,15 @@
 <resources>
-    <string name="app_name">Hex</string>
-    <string name="front_page">Front Page</string>
+    <string name="appName">Hex</string>
+    <string name="frontPage">Front Page</string>
     <string name="shareComments">Share Comments</string>
     <string name="shareArticle">Share Article</string>
     <string name="share">Share</string>
-    <string name="no_image_available">No image available</string>
-    <string name="article_feature_image">Article feature image</string>
-    <string name="unable_to_load_front_page">Unable to load the front page</string>
-    <string name="unable_to_load_comments">Unable to load comments</string>
-    <string name="unable_to_load_article">Unable to load article</string>
-    <string name="loading_failed_default">Unable to load content</string>
-    <string name="try_again_default">Try Again</string>
-    <string name="unable_to_load_story">Unable to load story</string>
+    <string name="noImageAvailable">No image available</string>
+    <string name="articleFeatureImage">Article feature image</string>
+    <string name="error.unableToLoadFrontPage">Unable to load the Front Page</string>
+    <string name="error.unableToLoadStory">Unable to load story</string>
+    <string name="error.unableToLoadComments">Unable to load comments</string>
+    <string name="error.unableToLoadArticle">Unable to load article</string>
+    <string name="error.default.loadingFailed">Unable to load content</string>
+    <string name="error.default.tryAgain">Try Again</string>
 </resources>

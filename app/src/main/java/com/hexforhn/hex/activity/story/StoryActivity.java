@@ -223,7 +223,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
 
     private void showRefreshFailedSnackbar() {
         Snackbar snackbar = Snackbar.make(findViewById(R.id.comments),
-                R.string.unable_to_load_story, Snackbar.LENGTH_LONG);
+                R.string.error_unableToLoadStory, Snackbar.LENGTH_LONG);
         TextView snackbarTextView = (TextView) snackbar.getView()
                 .findViewById(android.support.design.R.id.snackbar_text);
         snackbarTextView.setTextColor(Color.WHITE);

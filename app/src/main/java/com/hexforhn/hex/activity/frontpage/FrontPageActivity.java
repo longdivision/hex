@@ -116,7 +116,7 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) { actionBar.setTitle(R.string.front_page); }
+        if (actionBar != null) { actionBar.setTitle(R.string.frontPage); }
     }
 
     private void setupRefreshLayout() {
@@ -139,7 +139,7 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
 
     private void setupItemsUnavailableView() {
         TextView loadingFailed = (TextView) findViewById(R.id.loading_failed_text);
-        loadingFailed.setText(R.string.unable_to_load_front_page);
+        loadingFailed.setText(R.string.error_unableToLoadFrontPage);
 
         Button tryAgain = (Button) findViewById(R.id.try_again);
         tryAgain.setOnClickListener(new View.OnClickListener() {
@@ -201,7 +201,7 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
 
     private void showRefreshFailedSnackbar() {
         Snackbar snackbar = Snackbar.make(findViewById(R.id.front_page_container),
-                R.string.unable_to_load_front_page, Snackbar.LENGTH_LONG);
+                R.string.error_unableToLoadFrontPage, Snackbar.LENGTH_LONG);
         TextView snackbarTextView = (TextView) snackbar.getView()
                 .findViewById(android.support.design.R.id.snackbar_text);
         snackbarTextView.setTextColor(Color.WHITE);

@@ -111,7 +111,7 @@ public class CommentsFragment extends Fragment implements CommentsStateHandler, 
 
     private void setupItemsUnavailableView(View rootView) {
         ((TextView) rootView.findViewById((R.id.loading_failed_text)))
-                .setText(R.string.unable_to_load_comments);
+                .setText(R.string.error_unableToLoadComments);
         Button tryAgain = (Button) rootView.findViewById(R.id.try_again);
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override

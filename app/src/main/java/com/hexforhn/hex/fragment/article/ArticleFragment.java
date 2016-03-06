@@ -124,7 +124,7 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
 
     private void setupArticleUnavailableView(View rootView) {
         ((TextView) rootView.findViewById((R.id.loading_failed_text)))
-                .setText(R.string.unable_to_load_article);
+                .setText(R.string.error_unableToLoadArticle);
         Button tryAgain = (Button) rootView.findViewById(R.id.try_again);
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override

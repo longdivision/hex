@@ -89,12 +89,12 @@
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:background="@mipmap/no_image"
-            android:contentDescription="@string/no_image_available"/>
+            android:contentDescription="@string/noImageAvailable"/>
         <ImageView
             android:layout_width="64dp"
             android:layout_height="64dp"
             android:id="@+id/featureImage"
-            android:contentDescription="@string/article_feature_image"/>
+            android:contentDescription="@string/articleFeatureImage"/>
     </FrameLayout>
 
 </RelativeLayout>

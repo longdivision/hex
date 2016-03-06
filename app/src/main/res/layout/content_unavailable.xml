@@ -18,12 +18,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:text="@string/loading_failed_default"
+        android:text="@string/error.default.loadingFailed"
         android:textSize="20sp"
         android:gravity="center_horizontal" />
     <Button
         android:id="@+id/try_again"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/try_again_default"/>
+        android:text="@string/error.default.tryAgain"/>
 </LinearLayout>
