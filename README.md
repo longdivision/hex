@@ -10,7 +10,7 @@ A snappy and fun Hacker News client for Android.
 
 Hex is an Android app built to be fun, fast and pleasurable to use.
 
-Hex is powered [Hex API](https://github.com/longdivision/hex-api), a [Backend for frontend (BFF)](https://www.thoughtworks.com/radar/techniques/bff-backend-for-frontends) build to keep its service work to a minimum.
+Hex is powered by [Hex API](https://github.com/longdivision/hex-api).
 
 [travis-badge]: https://travis-ci.org/longdivision/hex.svg?branch=master
 [travis]: https://travis-ci.org/longdivision/hex
