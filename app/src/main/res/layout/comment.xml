@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/tag"
-                android:backgroundTint="@color/hidden_comments_tag"
+                android:backgroundTint="@color/hiddenCommentsTag"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp">
                 <TextView
@@ -86,6 +86,6 @@
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:background="@color/list_divider_color"/>
+            android:background="@color/listDividerColor"/>
     </LinearLayout>
 </LinearLayout>

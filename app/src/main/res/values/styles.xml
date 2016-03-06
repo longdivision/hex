@@ -1,7 +1,7 @@
 <resources>
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:colorPrimary">@color/primary</item>
-        <item name="android:colorPrimaryDark">@color/primary_dark</item>
+        <item name="android:colorPrimaryDark">@color/primaryDark</item>
         <item name="android:textColor">@color/text</item>
         <item name="android:windowActionModeOverlay">false</item>
     </style>
@@ -10,5 +10,8 @@
     </style>
     <style name="UrlText">
         <item name="android:textSize">16sp</item>
+    </style>
+    <style name="LineDivider">
+        <item name="android:color">@color/listDividerColor</item>
     </style>
 </resources>

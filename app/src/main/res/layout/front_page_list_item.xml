@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/activityHorizontalMargin"
+    android:paddingRight="@dimen/activityHorizontalMargin"
     android:paddingTop="12dp"
     android:paddingBottom="12dp"
     android:clickable="true"
@@ -42,7 +42,7 @@
                 android:layout_height="13dp"
                 android:layout_marginTop="4dp"
                 android:state_pressed="false"
-                android:backgroundTint="@color/light_green"
+                android:backgroundTint="@color/lightGreen"
                 android:background="@drawable/arrow_upward"/>
             <TextView
                 android:id="@+id/score"
@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="2dp"
                 android:textSize="14sp"
-                android:textColor="@color/light_green"/>
+                android:textColor="@color/lightGreen"/>
             <LinearLayout
                 android:layout_width="13dp"
                 android:layout_height="13dp"

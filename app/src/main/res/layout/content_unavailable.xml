@@ -5,14 +5,14 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="@dimen/activity_horizontal_margin">
+    android:padding="@dimen/activityHorizontalMargin">
     <ImageView
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_marginTop="-60dp"
         android:layout_marginBottom="15dp"
         android:background="@drawable/cloud_off"
-        android:backgroundTint="@color/primary_dark"/>
+        android:backgroundTint="@color/primaryDark"/>
     <TextView
         android:id="@+id/loading_failed_text"
         android:layout_width="wrap_content"

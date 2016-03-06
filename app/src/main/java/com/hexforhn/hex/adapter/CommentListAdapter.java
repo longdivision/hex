@@ -125,7 +125,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<ViewHolder> impleme
                 TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, indentSize, metrics));
         indentView.getLayoutParams().width = indentSizeScaledForDisplay;
 
-        int[] indentColors = mContext.getResources().getIntArray(R.array.comment_colors);
+        int[] indentColors = mContext.getResources().getIntArray(R.array.commentColors);
         int indentColor = indentColors[depth % indentColors.length];
         indentBarView.setBackgroundColor(indentColor);
 
