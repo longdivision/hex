@@ -74,7 +74,7 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
         mSwipeRefreshManager.stop();
         mSwipeRefreshManager.enable();
         showWebView();
-        hideArticleUnavaialeble();
+        hideArticleUnavailable();
     }
 
     public void onUrlReady(String url) {
@@ -140,14 +140,14 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
     }
 
     private void hideWebView() {
-        getView().findViewById(R.id.refresh).setVisibility(View.GONE);
+        getView().findViewById(R.id.webView).setVisibility(View.GONE);
     }
 
     private void showWebView() {
-        getView().findViewById(R.id.refresh).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.webView).setVisibility(View.VISIBLE);
     }
 
-    private void hideArticleUnavaialeble() {
+    private void hideArticleUnavailable() {
         getView().findViewById(R.id.content_unavailable).setVisibility(View.GONE);
     }
 

@@ -11,11 +11,20 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-        <WebView
-            android:id="@+id/webView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+            <WebView
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                />
+            <include
+                layout="@layout/content_unavailable"
+                android:visibility="gone"
+                />
+        </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
-    <include layout="@layout/content_unavailable"
-        android:visibility="gone"/>
 </LinearLayout>

@@ -37,7 +37,7 @@ public class CommentsFragment extends Fragment implements CommentsStateHandler, 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_comments, container,
                 false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.comment_recycler_view);
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.commentList);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         mRecyclerView.setHasFixedSize(true);
@@ -127,11 +127,11 @@ public class CommentsFragment extends Fragment implements CommentsStateHandler, 
     }
 
     private void showCommentList() {
-        getView().findViewById(R.id.refresh).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.commentList).setVisibility(View.VISIBLE);
     }
 
     private void hideCommentList() {
-        getView().findViewById(R.id.refresh).setVisibility(View.GONE);
+        getView().findViewById(R.id.commentList).setVisibility(View.GONE);
     }
 
     private void showCommentsUnavailable() {
