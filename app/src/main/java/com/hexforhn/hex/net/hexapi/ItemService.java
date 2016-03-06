@@ -13,15 +13,16 @@ import org.json.JSONObject;
 public class ItemService {
 
     private final RequestQueue mRequestQueue;
+    private final String mApiBaseUrl;
 
-    public ItemService(RequestQueue requestQueue) {
+    public ItemService(RequestQueue requestQueue, String apiUrl) {
         this.mRequestQueue = requestQueue;
+        mApiBaseUrl = apiUrl;
     }
 
     public Item getItem(String itemId) {
-        String API_URL = "https://hex-api.herokuapp.com";
         String STORY_PATH = "/story";
-        String itemPath = API_URL + STORY_PATH + "/" + itemId;
+        String itemPath = mApiBaseUrl + STORY_PATH + "/" + itemId;
 
         RequestFuture<JSONObject> future = RequestFuture.newFuture();
         JsonObjectRequest request = new JsonObjectRequest(itemPath, future, future);

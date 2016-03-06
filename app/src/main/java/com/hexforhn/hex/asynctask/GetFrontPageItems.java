@@ -22,7 +22,8 @@ public class GetFrontPageItems extends AsyncTask<Void, Integer, List<? extends I
 
     @Override
     protected List<? extends Item> doInBackground(Void... params) {
-        return (new FrontPageService(mApplication.getRequestQueue())).getTopItems();
+        return (new FrontPageService(mApplication.getRequestQueue(), mApplication.getApiBaseUrl()))
+                .getTopItems();
     }
 
     @Override

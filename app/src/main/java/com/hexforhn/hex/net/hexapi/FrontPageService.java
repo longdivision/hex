@@ -15,15 +15,16 @@ import java.util.List;
 public class FrontPageService {
 
     private final RequestQueue mRequestQueue;
+    private final String mApiBaseUrl;
 
-    public FrontPageService(RequestQueue requestQueue) {
-        this.mRequestQueue = requestQueue;
+    public FrontPageService(RequestQueue requestQueue, String apiUrl) {
+        mRequestQueue = requestQueue;
+        mApiBaseUrl = apiUrl;
     }
 
     public List<? extends Item> getTopItems() {
-        String API_URL = "https://hex-api.herokuapp.com";
         String FRONT_PAGE_PATH = "/front-page";
-        String frontPagePath = API_URL + FRONT_PAGE_PATH;
+        String frontPagePath = mApiBaseUrl + FRONT_PAGE_PATH;
 
         RequestFuture<JSONArray> future = RequestFuture.newFuture();
         JsonArrayRequest request = new JsonArrayRequest(frontPagePath, future, future);

@@ -20,7 +20,8 @@ public class GetItem extends AsyncTask<String, Integer, Item> {
 
     @Override
     protected Item doInBackground(String... params) {
-        return (new ItemService(mApplication.getRequestQueue())).getItem(params[0]);
+        return (new ItemService(mApplication.getRequestQueue(), mApplication.getApiBaseUrl()))
+                .getItem(params[0]);
     }
 
     @Override

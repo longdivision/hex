@@ -21,6 +21,10 @@ public class HexApplication extends Application {
         setupAnalytics();
     }
 
+    public String getApiBaseUrl() {
+        return "https://hex-api.herokuapp.com";
+    }
+
     public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             int MEGABYTE = 1024 * 1024;
