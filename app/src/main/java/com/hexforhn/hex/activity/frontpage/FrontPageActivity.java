@@ -87,8 +87,8 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
             showContentUnavailable();
         } else {
             mSwipeRefreshManager.enable();
-            showRefreshFailedSnackbar();
         }
+        showRefreshFailedSnackbar();
     }
 
     @Override
