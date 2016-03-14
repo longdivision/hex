@@ -19,7 +19,7 @@ import com.hexforhn.hex.util.view.RefreshHandler;
 import com.hexforhn.hex.util.view.SwipeRefreshManager;
 
 
-public class ArticleFragment extends Fragment implements ArticleStateHandler, RefreshHandler {
+public class ArticleFragment extends Fragment implements ArticleStateHandler, RefreshHandler, View.OnScrollChangeListener {
 
     private SwipeRefreshManager mSwipeRefreshManager;
     private String mUrl;
@@ -96,6 +96,15 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
         super.onDestroy();
     }
 
+    @Override
+    public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+        if (scrollY == 0) {
+            mSwipeRefreshManager.enable();
+        } else {
+            mSwipeRefreshManager.disable();
+        }
+    }
+
     private void setupState() {
         mState = new ArticleState(this);
         mState.sendEvent(ArticleState.Event.URL_REQUESTED);
@@ -120,6 +129,8 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
                 mState.sendEvent(ArticleState.Event.LOAD_FAILED);
             }
         });
+
+        mWebView.setOnScrollChangeListener(this);
     }
 
     private void setupArticleUnavailableView(View rootView) {
