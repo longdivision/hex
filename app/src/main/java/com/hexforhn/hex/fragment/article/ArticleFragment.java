@@ -17,13 +17,15 @@ import com.hexforhn.hex.R;
 import com.hexforhn.hex.activity.story.StoryActivity;
 import com.hexforhn.hex.util.view.RefreshHandler;
 import com.hexforhn.hex.util.view.SwipeRefreshManager;
+import com.hexforhn.hex.view.ObservableWebView;
 
 
-public class ArticleFragment extends Fragment implements ArticleStateHandler, RefreshHandler, View.OnScrollChangeListener {
+public class ArticleFragment extends Fragment implements ArticleStateHandler, RefreshHandler,
+        ObservableWebView.OnScrollChangedCallback{
 
     private SwipeRefreshManager mSwipeRefreshManager;
     private String mUrl;
-    private WebView mWebView;
+    private ObservableWebView mWebView;
     private ArticleState mState;
 
     @Override
@@ -97,7 +99,7 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
     }
 
     @Override
-    public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+    public void onScroll(int scrollX, int scrollY) {
         if (scrollY == 0) {
             mSwipeRefreshManager.enable();
         } else {
@@ -111,7 +113,7 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
     }
 
     private void setupWebView(View rootView) {
-        mWebView = (WebView) rootView.findViewById(R.id.webView);
+        mWebView = (ObservableWebView) rootView.findViewById(R.id.webView);
 
         mWebView.setWebViewClient(new WebViewClient());
         mWebView.getSettings().setLoadWithOverviewMode(true);
@@ -130,7 +132,7 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
             }
         });
 
-        mWebView.setOnScrollChangeListener(this);
+        mWebView.setOnScrollChangedCallback(this);
     }
 
     private void setupArticleUnavailableView(View rootView) {
