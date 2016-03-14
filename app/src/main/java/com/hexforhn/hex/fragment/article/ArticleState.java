@@ -8,7 +8,8 @@ public class ArticleState implements StateMachineHandler<ArticleState.State> {
         INACTIVE, LOADING_URL, URL_UNAVAILABLE, LOADING_CONTENT, CONTENT_UNAVAILABLE, CONTENT_LOADED
     }
     public enum Event {
-        URL_REQUESTED, URL_PROVIDED, URL_UNAVAILABLE, LOAD_REQUESTED, LOAD_SUCCEEDED, LOAD_FAILED
+        URL_REQUESTED, URL_PROVIDED, URL_UNAVAILABLE, LOAD_REQUESTED, LOAD_SUCCEEDED, LOAD_FAILED,
+        CLOSED
     }
 
     private ArticleStateHandler mHandler;
@@ -26,7 +27,11 @@ public class ArticleState implements StateMachineHandler<ArticleState.State> {
         mStateMachine.addTransition(Event.LOAD_REQUESTED, State.CONTENT_LOADED, State.LOADING_CONTENT);
         mStateMachine.addTransition(Event.LOAD_SUCCEEDED, State.LOADING_CONTENT, State.CONTENT_LOADED);
         mStateMachine.addTransition(Event.LOAD_FAILED, State.LOADING_CONTENT, State.CONTENT_UNAVAILABLE);
-
+        mStateMachine.addTransition(Event.CLOSED, State.LOADING_URL, State.INACTIVE);
+        mStateMachine.addTransition(Event.CLOSED, State.URL_UNAVAILABLE, State.INACTIVE);
+        mStateMachine.addTransition(Event.CLOSED, State.LOADING_CONTENT, State.INACTIVE);
+        mStateMachine.addTransition(Event.CLOSED, State.CONTENT_UNAVAILABLE, State.INACTIVE);
+        mStateMachine.addTransition(Event.CLOSED, State.CONTENT_LOADED, State.INACTIVE);
     }
 
     public boolean sendEvent(Event event) {

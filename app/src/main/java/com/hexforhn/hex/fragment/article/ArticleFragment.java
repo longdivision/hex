@@ -95,6 +95,7 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
 
     @Override
     public void onDestroyView() {
+        mState.sendEvent(ArticleState.Event.CLOSED);
         super.onDestroy();
     }
 
