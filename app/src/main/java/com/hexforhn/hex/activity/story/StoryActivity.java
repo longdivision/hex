@@ -2,6 +2,7 @@ package com.hexforhn.hex.activity.story;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -71,6 +72,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
 
     @Override
     public void onEnterLoaded() {
+        this.getSupportActionBar().setTitle(((Story) mItem).getTitle());
         this.provideUrlToWebViewFragment(((Story) mItem).getUrl());
         this.provideCommentsToCommentFragment(((Story) mItem).getComments());
     }
@@ -170,7 +172,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     public void onTabReselected(TabLayout.Tab tab) {}
 
     private void setupToolbar() {
-        String storyTitle = this.getIntent().getStringExtra(STORY_TITLE_INTENT_EXTRA_NAME);
+        String storyTitle = getStoryTitle();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(storyTitle);
@@ -204,7 +206,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     private void loadItem() {
-        String storyId = this.getIntent().getStringExtra(STORY_ID_INTENT_EXTRA_NAME);
+        String storyId = getStoryId();
         HexApplication appContext = (HexApplication) this.getApplicationContext()
                 .getApplicationContext();
 
@@ -246,5 +248,28 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
         if (!backHandled) {
             super.onBackPressed();
         }
+    }
+
+    public String getStoryId() {
+        Intent intent = this.getIntent();
+        String storyId = intent.getStringExtra(STORY_ID_INTENT_EXTRA_NAME);
+
+        if (storyId == null) {
+            final Uri data = intent.getData();
+            storyId = data.getQueryParameter("id");
+        }
+
+        return storyId;
+    }
+
+    public String getStoryTitle() {
+        Intent intent = this.getIntent();
+        String storyTitle = intent.getStringExtra(STORY_TITLE_INTENT_EXTRA_NAME);
+
+        if (storyTitle == null) {
+            storyTitle = "";
+        }
+
+        return storyTitle;
     }
 }

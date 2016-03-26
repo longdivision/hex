@@ -18,6 +18,13 @@
         <activity
             android:name=".activity.story.StoryActivity"
             android:label="" >
+            <intent-filter android:label="@string/appName">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https" android:host="news.ycombinator.com" android:pathPrefix="/item"/>
+                <data android:scheme="http" android:host="news.ycombinator.com" android:pathPrefix="/item"/>
+            </intent-filter>
         </activity>
     </application>
 </manifest>
