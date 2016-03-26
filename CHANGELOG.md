@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.3] - 2016-03-26
+
+- Allow Hacker News comment URLs to be opened in Hex.
+
 ## [v0.1.2] - 2016-03-14
 
 - Fix overly-sensitive refresh when scrolling up on an article.
