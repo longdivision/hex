@@ -18,31 +18,30 @@ import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.R;
 import com.hexforhn.hex.activity.story.StoryActivity;
 import com.hexforhn.hex.adapter.FrontPageListAdapter;
-import com.hexforhn.hex.asynctask.FrontPageItemsHandler;
-import com.hexforhn.hex.asynctask.GetFrontPageItems;
+import com.hexforhn.hex.asynctask.StoriesHandler;
+import com.hexforhn.hex.asynctask.GetTopStories;
 import com.hexforhn.hex.decoration.DividerItemDecoration;
 import com.hexforhn.hex.listener.ClickListener;
-import com.hexforhn.hex.model.Item;
 import com.hexforhn.hex.model.Story;
 import com.hexforhn.hex.util.view.RefreshHandler;
 import com.hexforhn.hex.util.view.SwipeRefreshManager;
-import com.hexforhn.hex.viewmodel.ItemListItemViewModel;
-import com.hexforhn.hex.viewmodel.factory.ItemListItemFactory;
+import com.hexforhn.hex.viewmodel.StoryListItemViewModel;
+import com.hexforhn.hex.viewmodel.factory.StoryListItemFactory;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 
-public class FrontPageActivity extends AppCompatActivity implements FrontPageItemsHandler,
+public class FrontPageActivity extends AppCompatActivity implements StoriesHandler,
         FrontPageStateHandler, ClickListener, RefreshHandler {
 
     private RecyclerView mRecyclerView;
-    private List<? extends Item> mItems = new ArrayList<>();
+    private List<Story> mStories = new ArrayList<>();
     private SwipeRefreshManager mSwipeRefreshManager;
     private final static String STORY_TITLE_INTENT_EXTRA_NAME = "storyTitle";
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
-    private GetFrontPageItems mGetFrontPageItems;
+    private GetTopStories mGetTopStories;
     private FrontPageState mState;
 
     @Override
@@ -51,22 +50,22 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         setContentView(R.layout.activity_front_page);
         setupToolbar();
         setupRecyclerView();
-        setupItemsUnavailableView();
+        setupStoriesUnavailableView();
         setupRefreshLayout();
         setupState();
     }
 
     @Override
     public void onEnterLoading() {
-        fetchFrontPageItems();
+        fetchFrontPageStories();
         mSwipeRefreshManager.start();
     }
 
     @Override
     public void onEnterLoaded() {
-        displayItems(mItems);
+        displayStories(mStories);
         hideContentUnavailable();
-        showItems();
+        showStories();
         mSwipeRefreshManager.stop();
         mSwipeRefreshManager.enable();
     }
@@ -75,14 +74,14 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     public void onEnterRefresh() {
         mSwipeRefreshManager.start();
         mSwipeRefreshManager.disable();
-        fetchFrontPageItems();
+        fetchFrontPageStories();
     }
 
     @Override
     public void onEnterUnavailable() {
         mSwipeRefreshManager.stop();
-        if (mItems.isEmpty()) {
-            hideItems();
+        if (mStories.isEmpty()) {
+            hideStories();
             mSwipeRefreshManager.disable();
             showContentUnavailable();
         } else {
@@ -92,13 +91,13 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
     }
 
     @Override
-    public void onItemsReady(List<? extends Item> items) {
-        setItems(items);
+    public void onStoriesReady(List<Story> stories) {
+        setStories(stories);
         mState.sendEvent(FrontPageState.Event.LOAD_SUCCEEDED);
     }
 
     @Override
-    public void onItemsUnavailable() {
+    public void onStoriesUnavailable() {
         mState.sendEvent(FrontPageState.Event.LOAD_FAILED);
     }
 
@@ -128,7 +127,7 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
 
-        mRecyclerView = (RecyclerView) findViewById(R.id.items);
+        mRecyclerView = (RecyclerView) findViewById(R.id.stories);
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this));
         mRecyclerView.setHasFixedSize(true);
@@ -137,7 +136,7 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void setupItemsUnavailableView() {
+    private void setupStoriesUnavailableView() {
         TextView loadingFailed = (TextView) findViewById(R.id.loading_failed_text);
         loadingFailed.setText(R.string.error_unableToLoadFrontPage);
 
@@ -155,18 +154,18 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         mState.sendEvent(FrontPageState.Event.LOAD_REQUESTED);
     }
 
-    private void displayItems(List<? extends Item> items) {
-        List<ItemListItemViewModel> itemListItems = ItemListItemFactory.createItemListItems(items);
-        RecyclerView.Adapter mAdapter = new FrontPageListAdapter(itemListItems, this);
+    private void displayStories(List<Story> stories) {
+        List<StoryListItemViewModel> storyListItems = StoryListItemFactory.createItemListItems(stories);
+        RecyclerView.Adapter mAdapter = new FrontPageListAdapter(storyListItems, this);
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    private void showItems() {
-        findViewById(R.id.items).setVisibility(View.VISIBLE);
+    private void showStories() {
+        findViewById(R.id.stories).setVisibility(View.VISIBLE);
     }
 
-    private void hideItems() {
-        findViewById(R.id.items).setVisibility(View.GONE);
+    private void hideStories() {
+        findViewById(R.id.stories).setVisibility(View.GONE);
     }
 
     private void showContentUnavailable() {
@@ -177,22 +176,22 @@ public class FrontPageActivity extends AppCompatActivity implements FrontPageIte
         findViewById(R.id.content_unavailable).setVisibility(View.GONE);
     }
 
-    private void fetchFrontPageItems() {
-        if (mGetFrontPageItems != null) {
-            mGetFrontPageItems.removeHandler();
+    private void fetchFrontPageStories() {
+        if (mGetTopStories != null) {
+            mGetTopStories.removeHandler();
         }
 
-        mGetFrontPageItems = new GetFrontPageItems(this, (HexApplication) this.getApplication());
-        mGetFrontPageItems.execute();
+        mGetTopStories = new GetTopStories(this, (HexApplication) this.getApplication());
+        mGetTopStories.execute();
     }
 
-    private void setItems(List<? extends Item> items) {
-        mItems = items;
+    private void setStories(List<Story> stories) {
+        mStories = stories;
     }
 
     private void openStoryAtPosition(int position) {
         Intent storyIntent = new Intent(this, StoryActivity.class);
-        Story story =  (Story) mItems.get(position);
+        Story story =  (Story) mStories.get(position);
         storyIntent.putExtra(STORY_TITLE_INTENT_EXTRA_NAME, story.getTitle());
         storyIntent.putExtra(STORY_ID_INTENT_EXTRA_NAME, story.getId());
 

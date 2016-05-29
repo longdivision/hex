@@ -1,25 +1,25 @@
 package com.hexforhn.hex.net.hexapi.marshall;
 
+import com.hexforhn.hex.model.Story;
+
 import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.hexforhn.hex.model.Item;
-
 public class FrontPageMarshaller {
 
-    public static List<? extends Item> marshall(JSONArray rawItems) {
-        List<Item> frontPageItems = new ArrayList<>();
+    public static List<Story> marshall(JSONArray rawStories) {
+        List<Story> frontPageStories = new ArrayList<>();
 
-        for (int i = 0; i < rawItems.length(); i++) {
+        for (int i = 0; i < rawStories.length(); i++) {
             try {
-                frontPageItems.add(ItemMarshaller.marshall(rawItems.getJSONObject(i)));
+                frontPageStories.add(StoryMarshaller.marshall(rawStories.getJSONObject(i)));
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        return frontPageItems;
+        return frontPageStories;
     }
 }

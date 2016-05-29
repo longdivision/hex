@@ -5,7 +5,7 @@ import android.text.format.DateUtils;
 import java.util.Date;
 
 
-public class ItemListItemViewModel {
+public class StoryListItemViewModel {
 
     private String mTitle;
     private String mDomain;
@@ -13,7 +13,7 @@ public class ItemListItemViewModel {
     private int mCommentCount;
     private Date mDate;
 
-    public ItemListItemViewModel(String title, String domain, int score, int commentCount, Date date) {
+    public StoryListItemViewModel(String title, String domain, int score, int commentCount, Date date) {
         this.mTitle = title;
         this.mDomain = domain;
         this.mScore = score;

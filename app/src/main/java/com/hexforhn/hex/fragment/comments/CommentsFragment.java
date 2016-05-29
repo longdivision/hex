@@ -45,7 +45,7 @@ public class CommentsFragment extends Fragment implements CommentsStateHandler, 
         mRecyclerView.setLayoutManager(mLayoutManager);
         mComments = new ArrayList<>();
 
-        setupItemsUnavailableView(rootView);
+        setupStoriesUnavailableView(rootView);
         setupRefreshLayout(rootView);
         setupState();
 
@@ -109,7 +109,7 @@ public class CommentsFragment extends Fragment implements CommentsStateHandler, 
         mCommentsState = new CommentsState(this);
     }
 
-    private void setupItemsUnavailableView(View rootView) {
+    private void setupStoriesUnavailableView(View rootView) {
         ((TextView) rootView.findViewById((R.id.loading_failed_text)))
                 .setText(R.string.error_unableToLoadComments);
         Button tryAgain = (Button) rootView.findViewById(R.id.try_again);

@@ -1,5 +1,8 @@
 package com.hexforhn.hex.net.hexapi.marshall;
 
+import com.hexforhn.hex.model.Comment;
+import com.hexforhn.hex.model.Story;
+
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -8,25 +11,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.hexforhn.hex.model.Comment;
-import com.hexforhn.hex.model.Item;
-import com.hexforhn.hex.model.Story;
+public class StoryMarshaller {
 
-public class ItemMarshaller {
-
-    public static Item marshall(JSONObject rawItem) {
+    public static Story marshall(JSONObject rawStory) {
         try {
-            String id = rawItem.getString("id");
-            String title = rawItem.getString("title");
-            String url = rawItem.getString("url");
-            String commentsUrl = rawItem.getString("commentsUrl");
-            String author = rawItem.getString("author");
-            String domain = rawItem.getString("domain");
-            int score = rawItem.getInt("score");
-            int commentCount = rawItem.getInt("commentCount");
-            Date date = new DateTime(rawItem.getString("time")).toDate();
+            String id = rawStory.getString("id");
+            String title = rawStory.getString("title");
+            String url = rawStory.getString("url");
+            String commentsUrl = rawStory.getString("commentsUrl");
+            String author = rawStory.getString("author");
+            String domain = rawStory.getString("domain");
+            int score = rawStory.getInt("score");
+            int commentCount = rawStory.getInt("commentCount");
+            Date date = new DateTime(rawStory.getString("time")).toDate();
 
-            JSONArray rawComments = rawItem.has("comments") ? rawItem.getJSONArray("comments") : null;
+            JSONArray rawComments = rawStory.has("comments") ? rawStory.getJSONArray("comments") : null;
             List<Comment> comments =  new ArrayList<>();
             if (rawComments != null) {
                 comments = marshallComments(rawComments);

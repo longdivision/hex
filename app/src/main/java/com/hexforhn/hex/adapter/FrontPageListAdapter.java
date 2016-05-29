@@ -14,16 +14,16 @@ import java.util.List;
 
 import com.hexforhn.hex.R;
 import com.hexforhn.hex.listener.ClickListener;
-import com.hexforhn.hex.viewmodel.ItemListItemViewModel;
+import com.hexforhn.hex.viewmodel.StoryListItemViewModel;
 
 
 public class FrontPageListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
-    private List<ItemListItemViewModel> mDataset;
+    private List<StoryListItemViewModel> mDataset;
     private ClickListener mClickListener;
     private Context mContext;
 
-    public FrontPageListAdapter(List<ItemListItemViewModel> myDataset, ClickListener clickListener) {
+    public FrontPageListAdapter(List<StoryListItemViewModel> myDataset, ClickListener clickListener) {
         mDataset = myDataset;
         mClickListener = clickListener;
     }
@@ -40,7 +40,7 @@ public class FrontPageListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        ItemListItemViewModel item = mDataset.get(position);
+        StoryListItemViewModel item = mDataset.get(position);
 
         TextView scoreText = (TextView) holder.mView.findViewById(R.id.score);
         TextView domainText = (TextView) holder.mView.findViewById(R.id.domain);
