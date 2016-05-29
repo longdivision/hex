@@ -17,12 +17,11 @@ import android.widget.TextView;
 import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.R;
 import com.hexforhn.hex.adapter.StorySlidePagerAdapter;
-import com.hexforhn.hex.asynctask.GetItem;
-import com.hexforhn.hex.asynctask.ItemHandler;
+import com.hexforhn.hex.asynctask.GetStory;
+import com.hexforhn.hex.asynctask.StoryHandler;
 import com.hexforhn.hex.fragment.article.ArticleFragment;
 import com.hexforhn.hex.fragment.comments.CommentsFragment;
 import com.hexforhn.hex.model.Comment;
-import com.hexforhn.hex.model.Item;
 import com.hexforhn.hex.model.Story;
 import com.hexforhn.hex.viewmodel.CommentViewModel;
 
@@ -30,17 +29,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StoryActivity extends AppCompatActivity implements ViewPager.OnPageChangeListener,
-        ItemHandler, TabLayout.OnTabSelectedListener, StoryStateHandler {
+        StoryHandler, TabLayout.OnTabSelectedListener, StoryStateHandler {
 
     private ViewPager mPager;
     private PagerAdapter mPagerAdapter;
-    private Item mItem;
+    private Story mStory;
     private TabLayout mTabLayout;
     private enum Page { WEBVIEW, COMMENTS }
     private Page mPage;
     private final static String STORY_TITLE_INTENT_EXTRA_NAME = "storyTitle";
     private final static String STORY_ID_INTENT_EXTRA_NAME = "storyId";
-    private GetItem mGetItem;
+    private GetStory mGetStory;
     private StoryState mState;
 
     @Override
@@ -67,14 +66,14 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
 
     @Override
     public void onEnterLoading() {
-        loadItem();
+        loadStory();
     }
 
     @Override
     public void onEnterLoaded() {
-        this.getSupportActionBar().setTitle(((Story) mItem).getTitle());
-        this.provideUrlToWebViewFragment(((Story) mItem).getUrl());
-        this.provideCommentsToCommentFragment(((Story) mItem).getComments());
+        this.getSupportActionBar().setTitle(mStory.getTitle());
+        this.provideUrlToWebViewFragment(mStory.getUrl());
+        this.provideCommentsToCommentFragment(mStory.getComments());
     }
 
     @Override
@@ -118,12 +117,12 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     @Override
-    public void onItemReady(Item item) {
-        this.mItem = item;
+    public void onStoryReady(Story story) {
+        this.mStory = story;
         mState.sendEvent(StoryState.Event.LOAD_SUCCEEDED);
     }
 
-    public void onItemUnavailable() {
+    public void onStoryUnavailable() {
         mState.sendEvent(StoryState.Event.LOAD_FAILED);
     }
 
@@ -187,16 +186,16 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     }
 
     private void handleShareRequest() {
-        if (mItem == null) {
+        if (mStory == null) {
             return;
         }
 
         String intentMessage = getString(R.string.shareArticle);
-        String url = ((Story) mItem).getUrl();
+        String url = ((Story) mStory).getUrl();
 
         if (mPage.equals(Page.COMMENTS)) {
             intentMessage = getString(R.string.shareComments);
-            url = ((Story) mItem).getCommentsUrl();
+            url = mStory.getCommentsUrl();
         }
 
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
@@ -205,22 +204,22 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
         startActivity(Intent.createChooser(shareIntent, intentMessage));
     }
 
-    private void loadItem() {
+    private void loadStory() {
         String storyId = getStoryId();
         HexApplication appContext = (HexApplication) this.getApplicationContext()
                 .getApplicationContext();
 
-        if (mGetItem != null) {
-            mGetItem.removeHandler();
+        if (mGetStory != null) {
+            mGetStory.removeHandler();
         }
 
-        mGetItem = new GetItem(this, appContext);
-        mGetItem.execute(storyId);
+        mGetStory = new GetStory(this, appContext);
+        mGetStory.execute(storyId);
     }
 
     protected void onDestroy () {
         super.onDestroy();
-        mGetItem.removeHandler();
+        mGetStory.removeHandler();
     }
 
     private void showRefreshFailedSnackbar() {

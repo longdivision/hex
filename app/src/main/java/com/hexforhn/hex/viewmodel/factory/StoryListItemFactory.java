@@ -6,17 +6,16 @@ import java.util.List;
 
 import com.hexforhn.hex.model.Item;
 import com.hexforhn.hex.model.Story;
-import com.hexforhn.hex.viewmodel.ItemListItemViewModel;
+import com.hexforhn.hex.viewmodel.StoryListItemViewModel;
 
-public class ItemListItemFactory {
+public class StoryListItemFactory {
 
-    public static ArrayList<ItemListItemViewModel> createItemListItems(List<? extends Item> items) {
-        ArrayList<ItemListItemViewModel> itemListItems = new ArrayList<>();
+    public static ArrayList<StoryListItemViewModel> createItemListItems(List<? extends Item> items) {
+        ArrayList<StoryListItemViewModel> itemListItems = new ArrayList<>();
 
         if (items == null) {
             return itemListItems;
         }
-
 
         Iterator itemsIterator = items.iterator();
 
@@ -31,8 +30,8 @@ public class ItemListItemFactory {
         return itemListItems;
     }
 
-    public static ItemListItemViewModel createItemListItemForStory(Story story) {
-        return new ItemListItemViewModel(story.getTitle(), story.getDomain(),
+    public static StoryListItemViewModel createItemListItemForStory(Story story) {
+        return new StoryListItemViewModel(story.getTitle(), story.getDomain(),
                 story.getScore(), story.getCommentCount(), story.getDate());
     }
 

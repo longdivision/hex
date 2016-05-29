@@ -25,7 +25,8 @@ public class StateMachine<State, Event> {
     }
 
     public boolean sendEvent(Event event) {
-        List<Pair<State, State>> possibleTransitions = mTransitionTable.get(event);
+        List<Pair<State, State>> possibleTransitions =
+                mTransitionTable.get(event);
 
         if (possibleTransitions == null) {
             return false;

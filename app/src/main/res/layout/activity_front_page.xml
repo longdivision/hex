@@ -29,7 +29,7 @@
             android:layout_height="fill_parent"
             android:orientation="vertical">
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/items"
+                android:id="@+id/stories"
                 android:orientation="vertical"
                 android:scrollbars="vertical"
                 android:layout_width="match_parent"
