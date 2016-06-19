@@ -121,6 +121,7 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
         mWebView.getSettings().setUseWideViewPort(true);
         mWebView.getSettings().setBuiltInZoomControls(true);
         mWebView.getSettings().setDisplayZoomControls(false);
+        mWebView.getSettings().setJavaScriptEnabled(true);
 
         mWebView.setWebViewClient(new WebViewClient() {
             public void onPageFinished(WebView view, String url) {
