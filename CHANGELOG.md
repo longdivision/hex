@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.4] - 2016-05-19
+
+- Enable JavaScript in the Article view to support use of e.g. YouTube.
+
 ## [v0.1.3] - 2016-03-26
 
 - Allow Hacker News comment URLs to be opened in Hex.
