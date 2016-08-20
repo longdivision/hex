@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.5] - 2016-08-20
+
+- Fix crashes caused by device rotation.
+
 ## [v0.1.4] - 2016-05-19
 
 - Enable JavaScript in the Article view to support use of e.g. YouTube.
