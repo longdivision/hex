@@ -3,6 +3,7 @@ language: android
 android:
   components:
     - tools
+    - platform-tools #
     - tools # Bug with Travis - ensure BT 25 is installed (https://github.com/travis-ci/docs-travis-ci-com/issues/779)
     - build-tools-25.0.3
     - android-25
