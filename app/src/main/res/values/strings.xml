@@ -12,4 +12,6 @@
     <string name="error.unableToLoadArticle">Unable to load article</string>
     <string name="error.default.loadingFailed">Unable to load content</string>
     <string name="error.default.tryAgain">Try Again</string>
+    <string name="article_tab">Article</string>
+    <string name="comment_tab_name">Comments</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.hexforhn.hex.fragment.article;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -12,129 +13,101 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.TextView;
-
+import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.R;
-import com.hexforhn.hex.activity.story.StoryActivity;
-import com.hexforhn.hex.util.view.RefreshHandler;
-import com.hexforhn.hex.util.view.SwipeRefreshManager;
-import com.hexforhn.hex.view.ObservableWebView;
+import com.hexforhn.hex.model.Story;
+import com.hexforhn.hex.net.hexapi.StoryService;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
+
+import java.util.concurrent.Callable;
 
 
-public class ArticleFragment extends Fragment implements ArticleStateHandler, RefreshHandler,
-        ObservableWebView.OnScrollChangedCallback{
+public class ArticleFragment extends Fragment {
 
-    private SwipeRefreshManager mSwipeRefreshManager;
-    private String mUrl;
-    private ObservableWebView mWebView;
-    private ArticleState mState;
+    private WebView mWebView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+    private Single mGetStory;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_article, container,
-                false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_article, container, false);
 
-        setupWebView(rootView);
-        setupRefreshLayout(rootView);
+        mGetStory = getStory();
+        mSwipeRefreshLayout = setupSwipeRefreshLayout(rootView);
+        mWebView = setupWebView(rootView, mSwipeRefreshLayout);
+
         setupArticleUnavailableView(rootView);
-        setupState();
+        loadArticle();
+
         return rootView;
     }
 
-    @Override
-    public void onEnterLoadingUrl() {
-        requestUrl();
-        mSwipeRefreshManager.start();
-        mSwipeRefreshManager.disable();
-    }
+    private WebView setupWebView(View rootView, final SwipeRefreshLayout swipeRefreshLayout) {
+        WebView webView = (WebView) rootView.findViewById(R.id.webView);
 
-    @Override
-    public void onEnterLoadingContent() {
-        loadPage();
-        mSwipeRefreshManager.start();
-        mSwipeRefreshManager.disable();
-    }
-
-    @Override
-    public void onEnterUrlUnavailable() {
-        mSwipeRefreshManager.stop();
-        mSwipeRefreshManager.disable();
-        showArticleUnavailable();
-        hideWebView();
-    }
-
-    @Override
-    public void onEnterContentUnavailable() {
-        mSwipeRefreshManager.stop();
-        mSwipeRefreshManager.disable();
-        showArticleUnavailable();
-        hideWebView();
-    }
-
-    @Override
-    public void onEnterContentLoaded() {
-        mSwipeRefreshManager.stop();
-        mSwipeRefreshManager.enable();
-        showWebView();
-        hideArticleUnavailable();
-    }
-
-    public void onUrlReady(String url) {
-        mUrl = url;
-        mState.sendEvent(ArticleState.Event.URL_PROVIDED);
-    }
-
-    public void onUrlUnavailable() {
-        mState.sendEvent(ArticleState.Event.URL_UNAVAILABLE);
-    }
-
-    @Override
-    public void onRefresh() {
-        mState.sendEvent(ArticleState.Event.LOAD_REQUESTED);
-    }
-
-    @Override
-    public void onDestroyView() {
-        mState.sendEvent(ArticleState.Event.CLOSED);
-        super.onDestroy();
-    }
-
-    @Override
-    public void onScroll(int scrollX, int scrollY) {
-        if (scrollY == 0) {
-            mSwipeRefreshManager.enable();
-        } else {
-            mSwipeRefreshManager.disable();
-        }
-    }
-
-    private void setupState() {
-        mState = new ArticleState(this);
-        mState.sendEvent(ArticleState.Event.URL_REQUESTED);
-    }
-
-    private void setupWebView(View rootView) {
-        mWebView = (ObservableWebView) rootView.findViewById(R.id.webView);
-
-        mWebView.setWebViewClient(new WebViewClient());
-        mWebView.getSettings().setLoadWithOverviewMode(true);
-        mWebView.getSettings().setUseWideViewPort(true);
-        mWebView.getSettings().setBuiltInZoomControls(true);
-        mWebView.getSettings().setDisplayZoomControls(false);
-        mWebView.getSettings().setJavaScriptEnabled(true);
-
-        mWebView.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url) {
-                mState.sendEvent(ArticleState.Event.LOAD_SUCCEEDED);
+        webView.setWebViewClient(new WebViewClient());
+        webView.getSettings().setLoadWithOverviewMode(true);
+        webView.getSettings().setUseWideViewPort(true);
+        webView.getSettings().setBuiltInZoomControls(true);
+        webView.getSettings().setDisplayZoomControls(false);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                hideArticleUnavailable();
+                mSwipeRefreshLayout.setRefreshing(true);
             }
 
-            public void onReceivedError(WebView view, WebResourceRequest request,
-                                        WebResourceError error) {
-                mState.sendEvent(ArticleState.Event.LOAD_FAILED);
+            public void onPageFinished(WebView view, String url) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                if (!request.isForMainFrame()) {
+                    return;
+                }
+
+                swipeRefreshLayout.setRefreshing(false);
+                showArticleUnavailable();
             }
         });
 
-        mWebView.setOnScrollChangedCallback(this);
+        return webView;
+    }
+
+    private SwipeRefreshLayout setupSwipeRefreshLayout(View rootView) {
+        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+
+        refreshLayout.setEnabled(false);
+
+        return refreshLayout;
+    }
+
+    private void loadArticle() {
+        SingleObserver observer = new SingleObserver<Story>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            }
+
+            @Override
+            public void onSuccess(Story story) {
+                mWebView.loadUrl(story.getUrl());
+                hideArticleUnavailable();
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                showArticleUnavailable();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+        };
+
+        mGetStory.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(observer);
     }
 
     private void setupArticleUnavailableView(View rootView) {
@@ -144,38 +117,35 @@ public class ArticleFragment extends Fragment implements ArticleStateHandler, Re
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mState.sendEvent(ArticleState.Event.LOAD_REQUESTED);
+                loadArticle();
+                mSwipeRefreshLayout.setRefreshing(true);
             }
         });
     }
 
-    private void setupRefreshLayout(View rootView) {
-        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
-        mSwipeRefreshManager = new SwipeRefreshManager(refreshLayout, this);
-    }
-
-    private void hideWebView() {
-        getView().findViewById(R.id.webView).setVisibility(View.GONE);
-    }
-
-    private void showWebView() {
-        getView().findViewById(R.id.webView).setVisibility(View.VISIBLE);
-    }
-
-    private void hideArticleUnavailable() {
-        getView().findViewById(R.id.content_unavailable).setVisibility(View.GONE);
+    public String getStoryId() {
+        return this.getArguments().getString("STORY_ID");
     }
 
     private void showArticleUnavailable() {
+        getView().findViewById(R.id.webView).setVisibility(View.GONE);
         getView().findViewById(R.id.content_unavailable).setVisibility(View.VISIBLE);
     }
 
-    private void loadPage() {
-        mWebView.loadUrl(mUrl);
+    private void hideArticleUnavailable() {
+        getView().findViewById(R.id.webView).setVisibility(View.VISIBLE);
+        getView().findViewById(R.id.content_unavailable).setVisibility(View.GONE);
     }
 
-    private void requestUrl() {
-        ((StoryActivity) getActivity()).onUrlRequested();
+    private Single getStory() {
+        return Single.fromCallable(new Callable<Story>() {
+            @Override
+            public Story call() {
+                HexApplication application = (HexApplication) getActivity().getApplication();
+                StoryService service = new StoryService(application.getRequestQueue(), application.getApiBaseUrl());
+                return service.getStory(getStoryId());
+            }
+        });
     }
 
     public boolean handleBack() {

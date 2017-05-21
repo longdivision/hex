@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:background="@drawable/tag"
-                android:backgroundTint="@color/hiddenCommentsTag"
+                android:backgroundTint="@color/primary"
                 android:paddingLeft="4dp"
                 android:paddingRight="4dp">
                 <TextView
