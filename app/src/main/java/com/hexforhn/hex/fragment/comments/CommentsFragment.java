@@ -10,26 +10,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
+import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.R;
-import com.hexforhn.hex.activity.story.StoryActivity;
 import com.hexforhn.hex.adapter.CommentListAdapter;
-import com.hexforhn.hex.util.view.RefreshHandler;
-import com.hexforhn.hex.util.view.SwipeRefreshManager;
+import com.hexforhn.hex.model.Comment;
+import com.hexforhn.hex.model.Story;
+import com.hexforhn.hex.net.hexapi.StoryService;
 import com.hexforhn.hex.viewmodel.CommentViewModel;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 
-public class CommentsFragment extends Fragment implements CommentsStateHandler, RefreshHandler {
-
+public class CommentsFragment extends Fragment {
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
-    private SwipeRefreshManager mSwipeRefreshManager;
-    private CommentsState mCommentsState;
-    private List<CommentViewModel> mComments;
+    Single mGetStory;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,76 +40,87 @@ public class CommentsFragment extends Fragment implements CommentsStateHandler, 
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_comments, container,
                 false);
 
-        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.commentList);
         mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+
+        mRecyclerView = (RecyclerView) rootView.findViewById(R.id.commentList);
         mRecyclerView.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
-        mComments = new ArrayList<>();
+
+        mGetStory = getStory();
 
         setupStoriesUnavailableView(rootView);
         setupRefreshLayout(rootView);
-        setupState();
+
+        loadComments();
 
         return rootView;
     }
 
-    @Override
-    public void onEnterLoading() {
-        requestNewComments();
-        mSwipeRefreshManager.start();
-        mSwipeRefreshManager.disable();
+    public Single getStory() {
+        return Single.fromCallable(new Callable<Story>() {
+            @Override
+            public Story call() {
+                HexApplication application = (HexApplication) getActivity().getApplication();
+                StoryService service = new StoryService(application.getRequestQueue(), application.getApiBaseUrl());
+                return service.getStory(getStoryId());
+            }
+
+        });
     }
 
-    @Override
-    public void onEnterLoaded() {
-        mAdapter = new CommentListAdapter(getActivity(), mComments);
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.setAdapter(mAdapter);
-
-        mSwipeRefreshManager.stop();
-        mSwipeRefreshManager.enable();
-        showCommentList();
-        hideCommentsUnavailable();
+    private void loadComments() {
+        mGetStory.subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(createCommentsLoadedHandler());
     }
 
-    @Override
-    public void onEnterRefresh() {
-        requestNewComments();
-        mSwipeRefreshManager.start();
+    private SingleObserver createCommentsLoadedHandler() {
+        return new SingleObserver<Story>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+            }
+
+            @Override
+            public void onSuccess(Story story) {
+                List<CommentViewModel> viewComments = new ArrayList<>();
+
+                for (Comment comment : story.getComments()) {
+                    addCommentToList(comment, viewComments, 0);
+                }
+
+                CommentListAdapter cla = new CommentListAdapter(getActivity(), viewComments);
+                mLayoutManager = new LinearLayoutManager(getActivity());
+                mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                mRecyclerView.setLayoutManager(mLayoutManager);
+                mRecyclerView.setAdapter(cla);
+
+                showCommentList();
+                hideCommentsUnavailable();
+
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                hideCommentList();
+                showCommentsUnavailable();
+            }
+        };
     }
 
-    @Override
-    public void onEnterUnavailable() {
-        mSwipeRefreshManager.stop();
-        if (mComments.isEmpty()) {
-            mSwipeRefreshManager.disable();
-            hideCommentList();
-            showCommentsUnavailable();
-        } else {
-            mSwipeRefreshManager.enable();
+    public String getStoryId() {
+        return this.getArguments().getString("STORY_ID");
+    }
+
+    private void addCommentToList(Comment comment, List<CommentViewModel> list, int depth) {
+        list.add(new CommentViewModel(comment.getUser(), comment.getText(), depth,
+                comment.getCommentCount(), comment.getDate()));
+
+        for (com.hexforhn.hex.model.Comment childComment : comment.getChildComments()) {
+            addCommentToList(childComment, list, depth + 1);
         }
-    }
-
-    public void onCommentsReady(List<CommentViewModel> comments) {
-        mComments = comments;
-        mCommentsState.sendEvent(CommentsState.Event.COMMENTS_PROVIDED);
-    }
-
-    public void onCommentsUnavailable() {
-        mCommentsState.sendEvent(CommentsState.Event.COMMENTS_UNAVAILABLE);
-    }
-
-    @Override
-    public void onRefresh() {
-        mCommentsState.sendEvent(CommentsState.Event.LOAD_REQUESTED);
-    }
-
-    private void setupState() {
-        mCommentsState = new CommentsState(this);
     }
 
     private void setupStoriesUnavailableView(View rootView) {
@@ -116,14 +130,26 @@ public class CommentsFragment extends Fragment implements CommentsStateHandler, 
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mCommentsState.sendEvent(CommentsState.Event.LOAD_REQUESTED);
+
+                mGetStory.subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe(createCommentsLoadedHandler());
             }
         });
     }
 
     private void setupRefreshLayout(View rootView) {
-        SwipeRefreshLayout refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
-        mSwipeRefreshManager = new SwipeRefreshManager(refreshLayout, this);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.refresh);
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        mGetStory.subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(createCommentsLoadedHandler());
+                    }
+                }
+        );
     }
 
     private void showCommentList() {
@@ -140,9 +166,5 @@ public class CommentsFragment extends Fragment implements CommentsStateHandler, 
 
     private void hideCommentsUnavailable() {
         getView().findViewById(R.id.content_unavailable).setVisibility(View.GONE);
-    }
-
-    private void requestNewComments() {
-        ((StoryActivity) getActivity()).onCommentRefreshRequested();
     }
 }
