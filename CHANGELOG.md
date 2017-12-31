@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.6] - 2017-12-31
+
+- Add sections for Ask HN, Show HN, New Items & Jobs!
+
 ## [v0.1.5] - 2016-08-20
 
 - Fix crashes caused by device rotation.
