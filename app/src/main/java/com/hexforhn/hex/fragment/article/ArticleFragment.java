@@ -149,7 +149,7 @@ public class ArticleFragment extends Fragment {
     }
 
     public boolean handleBack() {
-        if (mWebView.canGoBack()) {
+        if (mWebView != null && mWebView.canGoBack()) {
             mWebView.goBack();
             return true;
         }

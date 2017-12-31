@@ -7,14 +7,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
-
-import java.util.List;
-
 import com.hexforhn.hex.R;
 import com.hexforhn.hex.listener.ClickListener;
 import com.hexforhn.hex.viewmodel.StoryListItemViewModel;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 
 public class FrontPageListAdapter extends RecyclerView.Adapter<ViewHolder> {
