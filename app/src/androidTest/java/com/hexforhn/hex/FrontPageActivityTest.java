@@ -7,7 +7,7 @@ import android.test.ActivityTestCase;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.widget.TextView;
 
-import com.hexforhn.hex.activity.frontpage.FrontPageActivity;
+import com.hexforhn.hex.activity.ListActivity;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,8 +24,8 @@ import static org.hamcrest.CoreMatchers.allOf;
 @MediumTest
 public class FrontPageActivityTest extends ActivityTestCase {
     @Rule
-    public ActivityTestRule<FrontPageActivity> mActivityRule = new ActivityTestRule<>(
-            FrontPageActivity.class);
+    public ActivityTestRule<ListActivity> mActivityRule = new ActivityTestRule<>(
+            ListActivity.class);
 
     @Test
     public void testToolbarTitleIsShown() {

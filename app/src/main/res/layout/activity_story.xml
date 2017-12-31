@@ -5,7 +5,7 @@
     android:id="@+id/story"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.story.StoryActivity"
+    tools:context=".activity.StoryActivity"
     android:orientation="vertical">
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

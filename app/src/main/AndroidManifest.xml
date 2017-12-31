@@ -6,15 +6,17 @@
         android:icon="@mipmap/ic_launcher" android:theme="@style/AppTheme"
         android:name="com.hexforhn.hex.HexApplication">
         <activity
-            android:name=".activity.frontpage.FrontPageActivity"
-            android:label="@string/appName" >
+            android:name=".activity.ListActivity"
+            android:label="@string/appName"
+            android:launchMode="singleTask"
+            android:alwaysRetainTaskState="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.story.StoryActivity"
+            android:name=".activity.StoryActivity"
             android:label=""
             android:configChanges="orientation|screenSize">
             <intent-filter android:label="@string/appName">
@@ -25,5 +27,7 @@
                 <data android:scheme="http" android:host="news.ycombinator.com" android:pathPrefix="/item"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.AboutActivity"/>
     </application>
 </manifest>

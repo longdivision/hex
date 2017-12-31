@@ -1,4 +1,4 @@
-package com.hexforhn.hex.activity.story;
+package com.hexforhn.hex.activity;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -64,8 +64,8 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     private TabLayout setupTabLayout() {
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.article_tab));
-        tabLayout.addTab(tabLayout.newTab().setText(R.string.comment_tab_name));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.articleTabTitle));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.commentTabTitle));
         tabLayout.setOnTabSelectedListener(this);
 
         return tabLayout;
@@ -220,10 +220,10 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
         boolean backHandled = false;
 
         if (mPage.equals(Page.WEBVIEW)) {
-            ArticleFragment articleFragment = (ArticleFragment) (((StorySlidePagerAdapter)
+            ArticleFragment storyListFragment = (ArticleFragment) (((StorySlidePagerAdapter)
                     mPagerAdapter).getItem(0));
 
-            backHandled = articleFragment.handleBack();
+            backHandled = storyListFragment.handleBack();
         }
 
 
