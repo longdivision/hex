@@ -1,4 +1,4 @@
-package com.hexforhn.hex.fragment.storylist;
+package com.hexforhn.hex.fragment;
 
 import android.app.Fragment;
 import android.content.Intent;
@@ -161,7 +161,7 @@ public class StoryListFragment extends Fragment implements ClickListener {
                     HexApplication application = (HexApplication) getActivity().getApplication();
                     StoryCollectionService service = new StoryCollectionService(
                             application.getRequestQueue(),
-                            application.getApiBaseUrl());
+                            application.apiBaseUrl);
 
                     Collection collectionParam = Collection.valueOf(getArguments().getString(CollectionKey));
 

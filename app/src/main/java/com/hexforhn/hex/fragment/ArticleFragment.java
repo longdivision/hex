@@ -1,4 +1,4 @@
-package com.hexforhn.hex.fragment.article;
+package com.hexforhn.hex.fragment;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -123,7 +123,7 @@ public class ArticleFragment extends Fragment {
         });
     }
 
-    public String getStoryId() {
+    private String getStoryId() {
         return this.getArguments().getString("STORY_ID");
     }
 
@@ -142,7 +142,7 @@ public class ArticleFragment extends Fragment {
             @Override
             public Story call() {
                 HexApplication application = (HexApplication) getActivity().getApplication();
-                StoryService service = new StoryService(application.getRequestQueue(), application.getApiBaseUrl());
+                StoryService service = new StoryService(application.getRequestQueue(), application.apiBaseUrl);
                 return service.getStory(getStoryId());
             }
         });

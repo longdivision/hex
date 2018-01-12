@@ -7,6 +7,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -14,9 +15,10 @@ import android.view.MenuItem;
 import com.hexforhn.hex.HexApplication;
 import com.hexforhn.hex.R;
 import com.hexforhn.hex.adapter.StorySlidePagerAdapter;
-import com.hexforhn.hex.fragment.article.ArticleFragment;
+import com.hexforhn.hex.fragment.ArticleFragment;
 import com.hexforhn.hex.model.Story;
 import com.hexforhn.hex.net.hexapi.StoryService;
+import com.hexforhn.hex.util.ThemeHelper;
 import io.reactivex.Single;
 import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -40,7 +42,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        ThemeHelper.applyTheme(this);
         setContentView(R.layout.activity_story);
 
         mGetStory = getStory();
@@ -52,13 +54,23 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
         loadArticleTitle();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        ThemeHelper.updateTheme(this);
+    }
+
     private void setupToolbar() {
         String storyTitle = getAnyProvidedStoryTitle();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle(storyTitle);
-        getSupportActionBar().setHomeButtonEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            getSupportActionBar().setTitle(storyTitle);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
     }
 
     private TabLayout setupTabLayout() {
@@ -84,7 +96,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
         return pager;
     }
 
-    public String getStoryId() {
+    private String getStoryId() {
         Intent intent = this.getIntent();
         String storyId = intent.getStringExtra(STORY_ID_INTENT_EXTRA_NAME);
 
@@ -96,7 +108,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
         return storyId;
     }
 
-    public String getAnyProvidedStoryTitle() {
+    private String getAnyProvidedStoryTitle() {
         Intent intent = this.getIntent();
         String storyTitle = intent.getStringExtra(STORY_TITLE_INTENT_EXTRA_NAME);
 
@@ -133,7 +145,7 @@ public class StoryActivity extends AppCompatActivity implements ViewPager.OnPage
             @Override
             public Story call() {
                 HexApplication application = (HexApplication) getApplication();
-                StoryService service = new StoryService(application.getRequestQueue(), application.getApiBaseUrl());
+                StoryService service = new StoryService(application.getRequestQueue(), application.apiBaseUrl);
                 return service.getStory(getStoryId());
             }
         });

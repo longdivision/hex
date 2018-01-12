@@ -10,21 +10,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import java.util.List;
-
 import com.hexforhn.hex.R;
 import com.hexforhn.hex.adapter.helper.CommentListManager;
 import com.hexforhn.hex.adapter.helper.TextHelper;
 import com.hexforhn.hex.listener.ClickListener;
 import com.hexforhn.hex.viewmodel.CommentViewModel;
 
+import java.util.List;
+
 
 public class CommentListAdapter extends RecyclerView.Adapter<ViewHolder> implements ClickListener {
 
     private final static int INDENT_SIZE = 5;
     private final Context mContext;
-    private CommentListManager mCommentListManager;
+    private final CommentListManager mCommentListManager;
 
     public CommentListAdapter(Context context, List<CommentViewModel> comments) {
         mContext = context;
@@ -64,7 +63,7 @@ public class CommentListAdapter extends RecyclerView.Adapter<ViewHolder> impleme
         TextView relativeTimeView = (TextView) commentView.findViewById(R.id.relativeTime);
         final TextView textView = (TextView) commentView.findViewById(R.id.text);
         LinearLayout indentView = (LinearLayout) commentView.findViewById(R.id.indent);
-        View childCommentsHidden = commentView.findViewById(R.id.childCommentsHidden);
+        View childCommentsHidden = commentView.findViewById(R.id.hiddenChildCommentsMarker);
 
         usernameView.setText(comment.getUser());
         relativeTimeView.setText(comment.getRelativeTime());
@@ -84,8 +83,6 @@ public class CommentListAdapter extends RecyclerView.Adapter<ViewHolder> impleme
     /**
      * The comment body TextView is setup for autolinking. A special handler is used to ensure
      * non-link clicks are captured and bubbled to the parent to simulate a click.
-     *
-     * @param textView
      */
     private void setupClickListenerForTextView(final TextView textView) {
         textView.setOnClickListener(new View.OnClickListener() {
@@ -121,11 +118,10 @@ public class CommentListAdapter extends RecyclerView.Adapter<ViewHolder> impleme
         DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
 
         int indentSize = depth * INDENT_SIZE;
-        int indentSizeScaledForDisplay = Math.round(
+        indentView.getLayoutParams().width = Math.round(
                 TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, indentSize, metrics));
-        indentView.getLayoutParams().width = indentSizeScaledForDisplay;
 
-        int[] indentColors = mContext.getResources().getIntArray(R.array.commentColors);
+        int[] indentColors = mContext.getResources().getIntArray(R.array.comment);
         int indentColor = indentColors[depth % indentColors.length];
         indentBarView.setBackgroundColor(indentColor);
 

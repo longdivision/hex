@@ -21,21 +21,17 @@ import java.util.*;
 public class HexDrawer implements Drawer.OnDrawerItemClickListener{
 
     public enum Item {
-        FrontPage, New, Ask, Show, Jobs, About
+        FrontPage, New, Ask, Show, Jobs, About, Settings
     }
 
-    private List<Item> primaryItemsOrder  = new ArrayList<>(Arrays.asList(Item.FrontPage, Item.New, Item.Ask, Item.Show, Item.Jobs));
+    private final List<Item> primaryItemsOrder  = new ArrayList<>(Arrays.asList(Item.FrontPage, Item.New, Item.Ask, Item.Show, Item.Jobs));
 
-    private List<Item> secondaryItemsOrder = new ArrayList<>(Arrays.asList(Item.About));
+    private final List<Item> secondaryItemsOrder = new ArrayList<>(Arrays.asList(Item.Settings, Item.About));
 
     private static class ItemDetails {
-        int index;
-        String title;
-        int mIconResource;
-
-        public ItemDetails(int index) {
-            this.index = index;
-        }
+        final int index;
+        final String title;
+        final int mIconResource;
 
         public ItemDetails(int index, String title, int mIconResource) {
             this.index = index;
@@ -44,7 +40,7 @@ public class HexDrawer implements Drawer.OnDrawerItemClickListener{
         }
     }
 
-    public static Map<Item, ItemDetails> primaryItems = new HashMap<Item, ItemDetails>(){{
+    private static final Map<Item, ItemDetails> primaryItems = new HashMap<Item, ItemDetails>(){{
         put(Item.FrontPage, (new ItemDetails(0, "Front Page", R.drawable.upward_arrow)));
         put(Item.New, (new ItemDetails(1, "New", R.drawable.new_releases)));
         put(Item.Ask, (new ItemDetails(2, "Ask",  R.drawable.question_answer)));
@@ -52,16 +48,11 @@ public class HexDrawer implements Drawer.OnDrawerItemClickListener{
         put(Item.Jobs, (new ItemDetails(4, "Jobs",  R.drawable.work)));
     }};
 
-    public static Map<Item, ItemDetails>  secondaryItems = new HashMap<Item, ItemDetails>(){{
-        put(Item.About, (new ItemDetails(0)));
-    }};
-
-
-    Activity mActivity;
-    Toolbar mToolbar;
-    Item mCurrentItem;
-    Drawer mDrawer;
-    ItemSelectionHandler mHandler;
+    private final Activity mActivity;
+    private final Toolbar mToolbar;
+    private final Item mCurrentItem;
+    private Drawer mDrawer;
+    private final ItemSelectionHandler mHandler;
 
     public interface ItemSelectionHandler {
         void onItemSelectedHandler(Item item);
@@ -93,8 +84,6 @@ public class HexDrawer implements Drawer.OnDrawerItemClickListener{
                 .withName(itemDetails.title)
                 .withIcon(itemDetails.mIconResource)
                 .withIconTintingEnabled(true)
-                .withIconColorRes(R.color.text)
-                .withSelectedIconColorRes(R.color.primary)
                 .withOnDrawerItemClickListener(this);
 
             builder.addDrawerItems(drawerItem);

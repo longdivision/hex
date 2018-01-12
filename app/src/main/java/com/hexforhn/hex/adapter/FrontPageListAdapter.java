@@ -17,8 +17,8 @@ import java.util.List;
 
 public class FrontPageListAdapter extends RecyclerView.Adapter<ViewHolder> {
 
-    private List<StoryListItemViewModel> mDataset;
-    private ClickListener mClickListener;
+    private final List<StoryListItemViewModel> mDataset;
+    private final ClickListener mClickListener;
     private Context mContext;
 
     public FrontPageListAdapter(List<StoryListItemViewModel> myDataset, ClickListener clickListener) {
@@ -31,7 +31,7 @@ public class FrontPageListAdapter extends RecyclerView.Adapter<ViewHolder> {
         mContext = parent.getContext();
 
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(mContext)
-                .inflate(R.layout.front_page_list_item, parent, false);
+                .inflate(R.layout.story_list_item, parent, false);
 
         return new ViewHolder(v);
     }
