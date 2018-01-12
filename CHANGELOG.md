@@ -1,5 +1,9 @@
 # Changelog
 
+## [v0.1.7] - 2018-01-12
+
+- Add a dark theme option in settings!
+
 ## [v0.1.6] - 2017-12-31
 
 - Add sections for Ask HN, Show HN, New Items & Jobs!
