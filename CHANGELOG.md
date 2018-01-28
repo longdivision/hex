@@ -1,5 +1,10 @@
 # Changelog
 
+## [v0.1.8] - 2018-01-28
+
+- Fix bug where list position was lost after viewing an article.
+- Fix crashes that could occur when failing to load items.
+
 ## [v0.1.7] - 2018-01-12
 
 - Add a dark theme option in settings!
