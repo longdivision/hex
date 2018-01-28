@@ -47,14 +47,18 @@ public class CommentsFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mGetStory = getStory();
-
         setupStoriesUnavailableView(rootView);
         setupRefreshLayout(rootView);
 
-        loadComments();
-
         return rootView;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        mGetStory = getStory();
+
+        loadComments();
     }
 
     private Single getStory() {

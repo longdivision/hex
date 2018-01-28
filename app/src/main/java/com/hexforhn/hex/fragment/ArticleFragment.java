@@ -30,20 +30,23 @@ public class ArticleFragment extends Fragment {
 
     private WebView mWebView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private Single mGetStory;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup rootView = (ViewGroup) inflater.inflate(R.layout.fragment_article, container, false);
 
-        mGetStory = getStory();
         mSwipeRefreshLayout = setupSwipeRefreshLayout(rootView);
         mWebView = setupWebView(rootView, mSwipeRefreshLayout);
 
         setupArticleUnavailableView(rootView);
-        loadArticle();
 
         return rootView;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        loadArticle();
     }
 
     private WebView setupWebView(View rootView, final SwipeRefreshLayout swipeRefreshLayout) {
@@ -105,7 +108,7 @@ public class ArticleFragment extends Fragment {
             }
         };
 
-        mGetStory.subscribeOn(Schedulers.newThread())
+        getStory().subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(observer);
     }
@@ -128,13 +131,17 @@ public class ArticleFragment extends Fragment {
     }
 
     private void showArticleUnavailable() {
-        getView().findViewById(R.id.webView).setVisibility(View.GONE);
-        getView().findViewById(R.id.content_unavailable).setVisibility(View.VISIBLE);
+        View view = getView();
+
+        view.findViewById(R.id.webView).setVisibility(View.GONE);
+        view.findViewById(R.id.content_unavailable).setVisibility(View.VISIBLE);
     }
 
     private void hideArticleUnavailable() {
-        getView().findViewById(R.id.webView).setVisibility(View.VISIBLE);
-        getView().findViewById(R.id.content_unavailable).setVisibility(View.GONE);
+        View view = getView();
+
+        view.findViewById(R.id.webView).setVisibility(View.VISIBLE);
+        view.findViewById(R.id.content_unavailable).setVisibility(View.GONE);
     }
 
     private Single getStory() {
