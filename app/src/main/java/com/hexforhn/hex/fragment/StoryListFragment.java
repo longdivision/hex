@@ -65,16 +65,16 @@ public class StoryListFragment extends Fragment implements ClickListener {
         setupStoriesUnavailableView(rootView);
         setupRefreshLayout(rootView);
 
+        return rootView;
+    }
+
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
         mGetStories = getStories();
 
         processBundle(savedInstanceState);
 
-        return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
         setupState();
     }
 
